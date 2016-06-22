@@ -26,7 +26,7 @@ object OrcaParser extends SimpleExternalParserGenerator(
   cmd = Seq(DefaultPythonInterpreter.python2Exe(), "${envDir}/parsers/orca/parser/parser-orca/OrcaParser.py",
     "--uri", "${mainFileUri}", "${mainFilePath}"),
   resList = Seq(
-    "parser-orca/OrcaParser.py",
+    "parser-orca/orca_parser.py",
     "parser-orca/setup_paths.py",
     "nomad_meta_info/public.nomadmetainfo.json",
     "nomad_meta_info/common.nomadmetainfo.json",
