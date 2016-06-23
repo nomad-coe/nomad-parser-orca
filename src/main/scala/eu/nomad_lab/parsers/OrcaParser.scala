@@ -23,7 +23,7 @@ object OrcaParser extends SimpleExternalParserGenerator(
   mainFileTypes = Seq("text/.*"),
   //TODO: Update the replacement string (mainFileRe)
   mainFileRe = """ORCAORCAORCA""".r,
-  cmd = Seq(DefaultPythonInterpreter.python2Exe(), "${envDir}/parsers/orca/parser/parser-orca/OrcaParser.py",
+  cmd = Seq(DefaultPythonInterpreter.pythonExe(), "${envDir}/parsers/orca/parser/parser-orca/OrcaParser.py",
     "--uri", "${mainFileUri}", "${mainFilePath}"),
   resList = Seq(
     "parser-orca/orca_parser.py",
