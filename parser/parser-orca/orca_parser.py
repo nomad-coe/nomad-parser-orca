@@ -37,6 +37,52 @@ class OrcaContext(object):
         # allows to reset values if the same superContext is used to parse different files
         self.initialize_values()
 
+    def onClose_x_orca_atom_positions(self, backend, gIndex, value):
+            x = value["x_orca_atom_positions_x"]
+       	    y = value["x_orca_atom_positions_y"]
+       	    z = value["x_orca_atom_positions_z"]
+            pos = np.zeros((len(x),3), dtype=float)
+            pos[:,0] = x
+       	    pos[:,1] = y
+       	    pos[:,2] = z
+            backend.addArrayValue("atom_positions", pos)
+            backend.addValue("atom_labels", value["x_orca_atom_labels"])
+
+    def onClose_x_orca_XC_functional(self, backend, gIndex, value):
+            x = value["orca_x_dft_method"]
+            backend.addValue("XC_functional_name", x)
+
+    def onClose_x_total_energy(self, backend, gIndex, value):
+            x = value["orca_x_total_energy"]
+            backend.addValue("energy_total", x)
+
+    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
+            x = value["orca_x_orbital_nb"]
+            y = value["orca_x_orbital_occupation_nb"]
+            z = value["orca_x_orbital_energy"]
+            orbitals = np.zeros((len(x),3), dtype=float)
+            orbitals[:,0] = x
+            orbitals[:,1] = y
+            orbitals[:,2] = z
+            backend.addArrayValue("eigenvalues_occupation", orbitals)
+
+    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
+            x = value["x_orca_atom_labels"]
+            y = value["x_orca_basis_set"]
+            z = value["x_orca_basis_set_contracted"]
+            basisSet = np.zeros((len(x),3), dtype=float)
+            basisSet[:,0] = x
+            basisSet[:,1] = y
+            basisSet[:,2] = z
+            backend.addArrayValue("program_basis_set_type", 'Gaussian' + basisSet)
+
+
+   def onClose_program_name(self, backend, gIndex, value):
+            x = 'ORCA'
+            y = value["program_version"]
+            z = value["orca_program_compilation_date"]
+            backend.addValue("program_name", x + y + z)
+
 ##########################################################
 ############    [2] MAIN PARSER STARTS HERE   ############
 ##########################################################
