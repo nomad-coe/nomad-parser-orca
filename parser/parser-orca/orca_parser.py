@@ -76,8 +76,7 @@ class OrcaContext(object):
             basisSet[:,2] = z
             backend.addArrayValue("program_basis_set_type", 'Gaussian' + basisSet)
 
-
-   def onClose_program_name(self, backend, gIndex, value):
+    def onClose_x_orca_program_name(self, backend, gIndex, value):
             x = 'ORCA'
             y = value["program_version"]
             z = value["orca_program_compilation_date"]
