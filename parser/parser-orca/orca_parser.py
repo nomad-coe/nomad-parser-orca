@@ -48,6 +48,17 @@ class OrcaContext(object):
             backend.addArrayValue("atom_positions", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels"])
 
+    def onClose_x_orca_final_geometry(self, backend, gIndex, value):
+            x = value["x_orca_atom_positions_x_geo_opt"]
+            y = value["x_orca_atom_positions_y_geo_opt"]
+            z = value["x_orca_atom_positions_z_geo_opt"]
+            pos = np.zeros((len(x),3), dtype=float)
+            pos[:,0] = x
+            pos[:,1] = y
+            pos[:,2] = z
+            backend.addArrayValue("geometry_optimization_converged", pos)
+            backend.addValue("atom_labels", value["x_orca_atom_labels_geo_opt"])
+
     def onClose_x_orca_XC_functional(self, backend, gIndex, value):
             x = value["orca_x_dft_method"]
             backend.addValue("XC_functional_name", x)
@@ -55,6 +66,18 @@ class OrcaContext(object):
     def onClose_x_total_energy(self, backend, gIndex, value):
             x = value["orca_x_total_energy"]
             backend.addValue("energy_total", x)
+
+    def onClose_x_exchange_energy(self, backend, gIndex, value):
+            x = value["orca_x_exchange_energy"]
+            backend.addValue("energy_X", x)
+
+    def onClose_x_correlation_energy(self, backend, gIndex, value):
+            x = value["orca_x_correlation_energy"]
+            backend.addValue("energy_C", x)
+
+    def onClose_x_xc_energy(self, backend, gIndex, value):
+            x = value["orca_x_exchange_correlation_energy"]
+            backend.addValue("energy_XC", x)
 
     def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
             x = value["orca_x_orbital_nb"]
@@ -348,8 +371,8 @@ def buildSinglePointMatcher():
           SM("Energy Change\s*(?P<x_orca_energy_change_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_energy_change_tol_value__hartree>[-+0-9.eEdD]+) Eh"),
           SM("Max\. Gradient\s*(?P<x_orca_max_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
           SM("RMS Gradient\s*(?P<x_orca_rms_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
-          SM("Max\. Displacement\s*(?P<x_orca_max_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_displacement_tol__bohr>[-+0-9.eEdD]+) bohr"),
-          SM("RMS Displacement\s*(?P<x_orca_rms_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_displacement_tol__bohr>[-+0-9.eEdD]+) bohr"),
+          SM("Max\. Displacement\s*(?P<x_orca_max_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_displacement_tol_value__bohr>[-+0-9.eEdD]+) bohr"),
+          SM("RMS Displacement\s*(?P<x_orca_rms_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_displacement_tol_value__bohr>[-+0-9.eEdD]+) bohr"),
           # Final geometry:
           # CARTESIAN COORDINATES (ANGSTROEM)
           SM(name = 'final geometry',
