@@ -333,6 +333,114 @@ def buildSinglePointMatcher():
           SM(r"\s*Grid generation\s*\.\.\.\.\s*(?P<orca_x_grid_generation>[0-9.]+) sec")
           ]
        ),
+#
+# c) SimpleMatcher for geometry optimization:
+# *******************************************
+# 
+       SM(name = 'Geometry optimization',
+          startReStr = r"\s*\* Geometry Optimization Run \*\s*",
+          sections = ["x_orca_geometry_optimization"],
+          subMatchers = [
+          # Geometry optimization settings:
+          SM("Update method\s*(?P<x_orca_update_method>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_update_method_name>[a-zA-Z]+)"),
+          SM("Choice of coordinates\s*(?P<x_orca_coords_choice>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_coords_choice_name>[a-zA-Z ]+)"),
+          SM("Initial Hessian\s*(?P<x_orca_initial_hessian>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_initial_hessian_name>[a-zA-Z'\( \)]+)"),
+          SM("Energy Change\s*(?P<x_orca_energy_change_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_energy_change_tol_value__hartree>[-+0-9.eEdD]+) Eh"),
+          SM("Max\. Gradient\s*(?P<x_orca_max_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
+          SM("RMS Gradient\s*(?P<x_orca_rms_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
+          SM("Max\. Displacement\s*(?P<x_orca_max_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_displacement_tol__bohr>[-+0-9.eEdD]+) bohr"),
+          SM("RMS Displacement\s*(?P<x_orca_rms_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_displacement_tol__bohr>[-+0-9.eEdD]+) bohr"),
+          # Final geometry:
+          # CARTESIAN COORDINATES (ANGSTROEM)
+          SM(name = 'final geometry',
+             startReStr = r"\s*\*\*\*\s*THE OPTIMIZATION HAS CONVERGED\s*\*\*\*\s*",
+             sections = ["x_orca_final_geometry"],
+             subMatchers = [
+             SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt>[-+0-9.]+)\s+(?P<orca_atom_positions_y_geo_opt>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt>[-+0-9.]+)", repeats = True),
+             SM()
+             ]  
+          )
+          ]
+       ),
+       # *** FINAL ENERGY EVALUATION AT THE STATIONARY POINT ***
+       #
+       SM(name = 'Final step after geometry convergence',
+          startReStr = r"Setting up the final grid:",
+          sections = ["x_orca_final_run_after_convergence"],
+          subMatchers = [
+          # Final DFT Grid generation:
+          SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<orca_x_gral_integ_accuracy_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Radial Grid Type\s+RadialGrid\s*\.\.\.\s+(?P<orca_x_radial_grid_type_final>[a-zA-Z-_]+)"),
+          SM(r"\s+Angular Grid \(max\. acc\.\)\s+AngularGrid\s*\.\.\.\s+(?P<orca_x_angular_grid_final>[a-zA-Z-+0-9.eEdD-_]+)"),
+          SM(r"\s+Angular grid pruning method\s+GridPruning\s*\.\.\.\s+(?P<orca_x_grid_pruning_method_final>[a-zA-Z-+0-9.eEdD-_]+)"),
+          SM(r"\s+Weight generation scheme\s*WeightScheme\s*\.\.\.\s+(?P<orca_x_weight_gener_scheme_final>[a-zA-Z0-9]+)"),
+          SM(r"\s+Basis function cutoff\s+BFCut\s*\.\.\.\s+(?P<orca_x_basis_fn_cutoff_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Integration weight cutoff\s+WCut\s*\.\.\.\s+(?P<orca_x_integr_weight_cutoff_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<orca_x_nb_grid_pts_after_initial_pruning_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<orca_x_nb_grid_pts_after_weights_screening_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<orca_x_total_nb_grid_pts_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<orca_x_total_nb_batches_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<orca_x_avg_nb_points_per_batch_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<orca_x_avg_nb_grid_pts_per_atom_final>[-+0-9.eEdD]+)")
+          ]
+       ),
+       # Final SCF total Energy:
+       SM(name = 'Final total Energy',
+          startReStr = r"\s*TOTAL SCF ENERGY\s*",
+          sections = ["x_orca_total_energy"],
+          subMatchers = [
+          SM(r"\s*Total Energy\s+:\s+(?P<orca_x_total_energy__hartree>[-+0-9.eEdD]+)"),
+          # Energy Components:
+          SM(name = 'Final energy Components',
+             startReStr = r"\s*Components:\s*",
+             sections = ["x_orca_energy_componets"],
+             subMatchers = [
+             SM(r"\s*Nuclear Repulsion\s*:\s+(?P<orca_x_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*Electronic Energy\s*:\s+(?P<orca_x_elec_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*One Electron Energy:\s+(?P<orca_x_one_elec_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*Two Electron Energy:\s+(?P<orca_x_two_elec_energy__hartree>[-+0-9.eEdD]+)"),
+             # Virial Components:
+             SM(r"\s*Potential Energy\s*:\s+(?P<orca_x_potential_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*Kinetic Energy\s*:\s+(?P<orca_x_kinetc_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*Virial Ratio\s*:\s+(?P<orca_x_virial_ratio>[-+0-9.eEdD]+)"),
+             # DFT Components:
+             SM(r"\s*N\(Alpha\)\s*:\s+(?P<orca_x_nb_elect_alpha_channel>[-+0-9.eEdD]+)"),
+             SM(r"\s*N\(Beta\)\s*:\s+(?P<orca_x_nb_elect_beta_channel>[-+0-9.eEdD]+)"),
+             SM(r"\s*N\(Total\)\s*:\s+(?P<orca_x_nb_elect_total>[-+0-9.eEdD]+)"),
+             SM(r"\s*E\(X\)\s*:\s+(?P<orca_x_exchange_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*E\(C\)\s*:\s+(?P<orca_x_correlation_energy__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*E\(XC\)\s*:\s+(?P<orca_x_exchange_correlation_energy__hartree>[-+0-9.eEdD]+)")
+             ]
+          ),
+          # Final SCF convergence:
+          SM(r"\s*Last Energy change\s+\.\.\.\s+(?P<orca_x_last_energy_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<orca_x_last_energy_change_tolerance__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*Last MAX-Density change\s+\.\.\.\s+(?P<orca_x_last_max_density_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<orca_x_last_max_density_tolerance__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*Last RMS-Density change\s+\.\.\.\s+(?P<orca_x_last_rms_density_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<orca_x_last_rms_density_tolerance__hartree>[-+0-9.eEdD]+)")
+          ]
+       ),
+       # Orbitals Energies:
+       SM(name = 'Orbital Energies',
+          startReStr = r"\s*ORBITAL ENERGIES\s*",
+          sections = ["x_orca_orbital_energies"],
+          subMatchers = [
+          SM(r"\s*(?P<orca_x_orbital_nb>[0-9]+)\s+(?P<orca_x_orbital_occupation_nb>[-+0-9]+)\s+(?P<orca_x_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True)
+          ]
+       ),
+       # Mulliken population analysis:
+       SM(name = 'Mulliken population analysis',
+          startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
+          sections = ["x_orca_mulliken_analysis"],
+          subMatchers = [
+          SM(r"\s*(?P<orca_x_atom_nb>[0-9]+)\s+(?P<orca_x_atom_species>[a-zA-Z]+):\s+(?P<orca_x_mulliken_atom_charge>)", repeats = True),
+          SM(r"\s*Sum of atomic charges:\s*(?P<orca_x_mulliken_total_charge>[-+0-9.eEdD]+)"),
+          # Mulliken reduced orbital charges (mroc):
+          SM(r"\s*(?P<orca_x_atom_nb_mroc>[0-9]+)\s+(?P<orca_x_atom_species_mroc>[a-zA-Z]+)(?P<orca_x_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<orca_x_mulliken_partial_orbital_charge_mroc>[-+0-9.eEdD]+)", repeats = True)
+         ]
+       ),
+#
+# d) Post-processing calculations:
+# ********************************
+# 
        # MP2 Calculation (post-proc):
        SM(name = 'mp2',
           startReStr = r"\s*ORCA MP2 CALCULATION\s*",
