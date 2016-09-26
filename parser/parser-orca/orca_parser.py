@@ -379,8 +379,7 @@ def buildSinglePointMatcher():
              startReStr = r"\s*\*\*\*\s*THE OPTIMIZATION HAS CONVERGED\s*\*\*\*\s*",
              sections = ["x_orca_final_geometry"],
              subMatchers = [
-             SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt>[-+0-9.]+)\s+(?P<orca_atom_positions_y_geo_opt>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt>[-+0-9.]+)", repeats = True),
-             SM()
+             SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt>[-+0-9.]+)\s+(?P<orca_atom_positions_y_geo_opt>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt>[-+0-9.]+)", repeats = True)
              ]  
           )
           ]
