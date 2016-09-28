@@ -127,12 +127,12 @@ def build_OrcaMainFileSimpleMatcher():
     return SM(
         name = 'root',
         weak = True,
-        startReStr = r"\s*\* O  R  C  A \*\s",
+        startReStr = r"\s*\* O  R  C  A \*\s*",
         forwardMatch = True,
         sections = ["section_run"],
         subMatchers = [
             SM(name = 'ProgramHeader',
-               startReStr = r"\s*\* O  R  C  A \*\s",
+               startReStr = r"\s*\* O  R  C  A \*\s*",
                subMatchers = [
                     SM(r"\s*Program Version\s*(?P<program_version>[0-9a-zA-Z_.]*)"),
                     SM(r" *\(\$Date\: *(?P<orca_program_compilation_date>[0-9/]+) at (?P<orca_program_compilation_time>[0-9:]+)")
@@ -151,7 +151,7 @@ def buildSinglePointMatcher():
      subMatchers = [
        # Get atomic positions:
        SM(name = 'Atomic Coordinates',
-          startReStr = r"CARTESIAN COORDINATES (ANGSTROEM)\s*",
+          startReStr = r"CARTESIAN COORDINATES \(ANGSTROEM\)\s*",
           sections = ["x_orca_atom_positions"],
           subMatchers = [
           SM(r"\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x>[-+0-9.]+)\s+(?P<orca_atom_positions_y>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z>[-+0-9.]+)", repeats = True)
