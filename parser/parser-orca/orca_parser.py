@@ -250,7 +250,7 @@ def buildSinglePointMatcher():
           startReStr = r"\s*SCF ITERATIONS\s*",
           sections = ["section_scf_iteration"],
           subMatchers = [
-          SM(r"\s*(?P<orca_x_iteration_nb>[0-9]+)\s+(?P<x_orca_total_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<x_orca_total_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           ]
        ),
 #      *****************************************************
@@ -401,7 +401,7 @@ def buildSinglePointMatcher():
           SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_initial_pruning_final>[-+0-9.eEdD]+)"),
           SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_weights_screening_final>[-+0-9.eEdD]+)"),
           SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<ox_rca_total_nb_batches_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches_final>[-+0-9.eEdD]+)"),
           SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch_final>[-+0-9.eEdD]+)"),
           SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom_final>[-+0-9.eEdD]+)")
           ]
@@ -513,11 +513,11 @@ def buildSinglePointMatcher():
           SM(r"\s*E\(0\)\s*\.\.\.\s*(?P<x_orca_mp2_initial_guess__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*E\(MP2\)\s*\.\.\.\s*(?P<x_orca_mp2_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*Initial E\(tot\)\s*\.\.\.\s*(?P<x_orca_mp2_total_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_<T_T>_energy__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_T_and_T_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           # iterations (e.g.:UHF COUPLED CLUSTER ITERATIONS):
-          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_0.5<S_and_S>_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           # Final Coupled Cluster Energies:
           SM(r"\s*E\(CORR\)\s*\.\.\.\s*(?P<x_orca_ccsd_correlation_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*E\(TOT\)\s*\.\.\.\s*(?P<x_orca_ccsd_total_energy__hartree>[-+0-9.eEdD]+)"),
