@@ -59,51 +59,31 @@ class OrcaContext(object):
             backend.addArrayValue("geometry_optimization_converged", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels_geo_opt"])
 
-    def onClose_x_orca_XC_functional(self, backend, gIndex, value):
-            x = value["x_orca_dft_method"]
-            backend.addValue("XC_functional_name", x)
-
-    def onClose_x_total_energy(self, backend, gIndex, value):
-            x = value["x_orca_total_energy"]
-            backend.addValue("energy_total", x)
-
-    def onClose_x_exchange_energy(self, backend, gIndex, value):
-            x = value["x_orca_exchange_energy"]
-            backend.addValue("energy_X", x)
-
-    def onClose_x_correlation_energy(self, backend, gIndex, value):
-            x = value["x_orca_correlation_energy"]
-            backend.addValue("energy_C", x)
-
-    def onClose_x_xc_energy(self, backend, gIndex, value):
-            x = value["x_orca_exchange_correlation_energy"]
-            backend.addValue("energy_XC", x)
-
-    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
-            x = value["x_orca_orbital_nb"]
-            y = value["x_orca_orbital_occupation_nb"]
-            z = value["x_orca_orbital_energy"]
-            orbitals = np.zeros((len(x),3), dtype=float)
-            orbitals[:,0] = x
-            orbitals[:,1] = y
-            orbitals[:,2] = z
-            backend.addArrayValue("eigenvalues_occupation", orbitals)
-
-    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
-            x = value["x_orca_atom_labels"]
-            y = value["x_orca_basis_set"]
-            z = value["x_orca_basis_set_contracted"]
-            basisSet = np.zeros((len(x),3), dtype=float)
-            basisSet[:,0] = x
-            basisSet[:,1] = y
-            basisSet[:,2] = z
-            backend.addArrayValue("program_basis_set_type", 'Gaussian' + basisSet)
-
-    def onClose_x_orca_program_name(self, backend, gIndex, value):
-            x = 'ORCA'
-            y = value["x_orca_program_version"]
-            z = value["x_orca_program_compilation_date"]
-            backend.addValue("program_name", x + y + z)
+#    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
+#            x = value["x_orca_orbital_nb"]
+#            y = value["x_orca_orbital_occupation_nb"]
+#            z = value["x_orca_orbital_energy"]
+#            orbitals = np.zeros((len(x),3), dtype=float)
+#            orbitals[:,0] = x
+#            orbitals[:,1] = y
+#            orbitals[:,2] = z
+#            backend.addArrayValue("eigenvalues_occupation", orbitals)
+#
+#    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
+#            x = value["x_orca_atom_labels"]
+#            y = value["x_orca_basis_set"]
+#            z = value["x_orca_basis_set_contracted"]
+#            basisSet = np.zeros((len(x),3), dtype=float)
+#            basisSet[:,0] = x
+#            basisSet[:,1] = y
+#            basisSet[:,2] = z
+#            backend.addArrayValue("program_basis_set_type", 'Gaussian' + basisSet)
+#
+#    def onClose_x_orca_program_name(self, backend, gIndex, value):
+#            x = 'ORCA'
+#            y = value["x_orca_program_version"]
+#            z = value["x_orca_program_compilation_date"]
+#            backend.addValue("program_name", x + y + z)
 
 ##########################################################
 ############    [2] MAIN PARSER STARTS HERE   ############
@@ -160,14 +140,14 @@ def buildSinglePointMatcher():
        # Get basis set information:
        SM(name = 'Basis set information',
           startReStr = r"BASIS SET INFORMATION\s*",
-          sections = ["x_orca_basis_set_info"],
+          sections = ["section_basis_set"],
           subMatchers = [
           # Atom labels and basis set:
           SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True),
           # Auxiliary basis set information:
           SM(name = 'Auxiliary basis set information',
              startReStr = r"AUXILIARY BASIS SET INFORMATION\s*",
-             sections = ["x_orca_auxiliary_basis_set_info"],
+             sections = ["section_basis_set"],
              subMatchers = [
              SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_auxiliary_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_auxiliary_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True)
              ]
@@ -177,7 +157,7 @@ def buildSinglePointMatcher():
        # Basis set statistics and startup info:
        SM(name = 'Basis set statistics and startup info',
           startReStr = r"\s*BASIS SET STATISTICS AND STARTUP INFO\s*",
-          sections = ["x_orca_basis_set_statistics_and_startup_info"],
+          sections = ["section_basis_set"],
           subMatchers = [
           # Gaussian basis set:
           SM(name = 'Gaussian basis set',
@@ -210,7 +190,7 @@ def buildSinglePointMatcher():
        # SCF Settings:
        SM(name = 'Orca SCF settings',
           startReStr = r"\s*ORCA SCF\s*",
-          sections = ["x_orca_scf_settings"],
+          sections = ["section_method"],
           subMatchers = [
           SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_dft_method>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
@@ -259,7 +239,7 @@ def buildSinglePointMatcher():
 #      *****************************************************
        SM(name = 'Final step after convergence',
           startReStr = r"Setting up the final grid:",
-          sections = ["x_orca_final_run_after_convergence"],
+          sections = ["section_scf_iteration"],
           subMatchers = [
           # Final DFT Grid generation:
           SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy_final>[-+0-9.eEdD]+)"),
@@ -280,13 +260,13 @@ def buildSinglePointMatcher():
        # Final SCF total Energy:
        SM(name = 'Total Energy',
           startReStr = r"\s*TOTAL SCF ENERGY\s*",
-          sections = ["x_orca_total_energy"],
+          sections = ["section_scf_iteration"],
           subMatchers = [
           SM(r"\s*Total Energy\s+:\s+(?P<x_orca_total_energy__hartree>[-+0-9.eEdD]+)"),
           # Energy Components:
           SM(name = 'Energy Components',
              startReStr = r"\s*Components:\s*",
-             sections = ["x_orca_energy_componets"],
+             sections = ["section_scf_iteration"],
              subMatchers = [
              SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
              SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
@@ -314,7 +294,7 @@ def buildSinglePointMatcher():
        # Orbitals Energies:
        SM(name = 'Orbital Energies',
           startReStr = r"\s*ORBITAL ENERGIES\s*",
-          sections = ["x_orca_orbital_energies"],
+          sections = ["section_dos"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True)
           ]
@@ -322,7 +302,7 @@ def buildSinglePointMatcher():
        # Mulliken population analysis:
        SM(name = 'Mulliken population analysis',
           startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
-          sections = ["x_orca_mulliken_analysis"],
+          sections = ["section_dos"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>)", repeats = True),
           SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
@@ -333,7 +313,7 @@ def buildSinglePointMatcher():
        # Time table:
        SM(name = 'timings',
           startReStr = r"\s*TIMINGS\s*",
-          sections = ["x_orca_timings"],
+          sections = ["section_scf_iteration"],
           subMatchers = [
           SM(r"\s*Total SCF time:\s+(?P<x_orca_total_days_time>[0-9]+) days (?P<x_orca_total_hours_time>[0-9]+) hours (?P<x_orca_total_mins_time>[0-9]+) min (?P<x_orca_total_secs_time>[0-9]+) sec"),
           SM(r"\s*Total time\s*\.\.\.\.\s*(?P<x_orca_final_time>[0-9.]+) sec"),
@@ -362,7 +342,7 @@ def buildSinglePointMatcher():
 # 
        SM(name = 'Geometry optimization',
           startReStr = r"\s*\* Geometry Optimization Run \*\s*",
-          sections = ["x_orca_geometry_optimization"],
+          sections = ["section_sampling_method"],
           subMatchers = [
           # Geometry optimization settings:
           SM("Update method\s*(?P<x_orca_update_method>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_update_method_name>[a-zA-Z]+)"),
@@ -388,7 +368,7 @@ def buildSinglePointMatcher():
        #
        SM(name = 'Final step after geometry convergence',
           startReStr = r"Setting up the final grid:",
-          sections = ["x_orca_final_run_after_convergence"],
+          sections = ["section_scf_iteration"],
           subMatchers = [
           # Final DFT Grid generation:
           SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy_final>[-+0-9.eEdD]+)"),
@@ -409,13 +389,13 @@ def buildSinglePointMatcher():
        # Final SCF total Energy:
        SM(name = 'Final total Energy',
           startReStr = r"\s*TOTAL SCF ENERGY\s*",
-          sections = ["x_orca_total_energy"],
+          sections = ["section_single_configuration_calculation"],
           subMatchers = [
           SM(r"\s*Total Energy\s+:\s+(?P<x_orca_total_energy__hartree>[-+0-9.eEdD]+)"),
           # Energy Components:
           SM(name = 'Final energy Components',
              startReStr = r"\s*Components:\s*",
-             sections = ["x_orca_energy_componets"],
+             sections = ["section_single_configuration_calculation"],
              subMatchers = [
              SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
              SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
@@ -443,7 +423,7 @@ def buildSinglePointMatcher():
        # Orbitals Energies:
        SM(name = 'Orbital Energies',
           startReStr = r"\s*ORBITAL ENERGIES\s*",
-          sections = ["x_orca_orbital_energies"],
+          sections = ["section_dos"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True)
           ]
@@ -451,7 +431,7 @@ def buildSinglePointMatcher():
        # Mulliken population analysis:
        SM(name = 'Mulliken population analysis',
           startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
-          sections = ["x_orca_mulliken_analysis"],
+          sections = ["section_dos"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>)", repeats = True),
           SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
@@ -466,11 +446,11 @@ def buildSinglePointMatcher():
        # MP2 Calculation (post-proc):
        SM(name = 'mp2',
           startReStr = r"\s*ORCA MP2 CALCULATION\s*",
-          sections = ["x_orca_mp2"],
+          sections = ["section_method"],
           subMatchers = [
           SM(r"\s*Dimension of the basis\s*\.\.\.\s*(?P<x_orca_mp2_basis_dimension>[0-9.]+)"),
           SM(r"\s*Overall scaling of the MP2 energy\s*\.\.\.\s*(?P<x_orca_scaling_mp2_energy__hartree>[-+0-9.eEdD]+) Eh"),
-          SM(r"\s*Dimension of the aux-basis\s*\.\.\.\s*(?P<x_orca_mp2_aux-basis_dimension>[0-9.]+)"),
+          SM(r"\s*Dimension of the aux-basis\s*\.\.\.\s*(?P<x_orca_mp2_aux_basis_dimension>[0-9.]+)"),
           SM(r"\s*RI-MP2 CORRELATION ENERGY:\s*(?P<x_orca_mp2_corr_energy__hartree>[-+0-9.eEdD]+) Eh"),
           SM(r"\s*MP2 TOTAL ENERGY:\s*(?P<x_orca_mp2_total_energy__hartree>[-+0-9.eEdD]+) Eh")
           ]
@@ -478,7 +458,7 @@ def buildSinglePointMatcher():
        # Driven CI (post-proc):
        SM(name = 'CI',
           startReStr = r"\s*ORCA-MATRIX DRIVEN CI\s*",
-          sections = ["x_orca_driven_CI"],
+          sections = ["section_method"],
           subMatchers = [
           SM(r"\s*Correlation treatment\s*\.\.\.\s*(?P<x_orca_wave_function_correlation_treatment>[a-zA-Z0-9.]+)"),
           SM(r"\s*Single excitations\s*\.\.\.\s*(?P<x_orca_single_excitations_on_off>[a-zA-Z]+)"),
