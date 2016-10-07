@@ -169,7 +169,7 @@ def buildSinglePointMatcher():
              SM(r"\s+# of contracted basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions>[-+0-9.eEdD]+)"),
              SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment>[-+0-9.eEdD]+)"),
              SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_primitive_gaussian_shells>[-+0-9.eEdD]+)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells>[-+0-9.eEdD]+)"),
              ]
           ),
           # Gaussian auxiliary basis set:
@@ -182,7 +182,7 @@ def buildSinglePointMatcher():
              SM(r"\s+# of contracted aux-basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions_aux>[-+0-9.eEdD]+)"),
              SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment_aux>[-+0-9.eEdD]+)"),
              SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_primitive_gaussian_shells_aux>[-+0-9.eEdD]+)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells_aux>[-+0-9.eEdD]+)"),
              ]
           )
           ]
@@ -304,7 +304,7 @@ def buildSinglePointMatcher():
           startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
           sections = ["section_dos"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>)", repeats = True),
+          SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>[-+0-9.eEdD]+)", repeats = True),
           SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
           # Mulliken reduced orbital charges (mroc):
           SM(r"\s*(?P<x_orca_atom_nb_mroc>[0-9]+)\s+(?P<x_orca_atom_species_mroc>[a-zA-Z]+)(?P<x_orca_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<x_orca_mulliken_partial_orbital_charge_mroc>[-+0-9.eEdD]+)", repeats = True)
@@ -494,7 +494,6 @@ def buildSinglePointMatcher():
           SM(r"\s*E\(MP2\)\s*\.\.\.\s*(?P<x_orca_mp2_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*Initial E\(tot\)\s*\.\.\.\s*(?P<x_orca_mp2_total_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_T_and_T_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           # iterations (e.g.:UHF COUPLED CLUSTER ITERATIONS):
           SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
