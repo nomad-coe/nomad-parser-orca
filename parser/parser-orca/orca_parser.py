@@ -144,13 +144,13 @@ def buildSinglePointMatcher():
           sections = ["section_basis_set"],
           subMatchers = [
           # Atom labels and basis set:
-          SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True),
+          SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_basis_set_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True),
           # Auxiliary basis set information:
           SM(name = 'Auxiliary basis set information',
              startReStr = r"AUXILIARY BASIS SET INFORMATION\s*",
              sections = ["section_basis_set"],
              subMatchers = [
-             SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_auxiliary_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_auxiliary_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True)
+             SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_basis_set_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_auxiliary_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_auxiliary_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True)
              ]
           )
           ]   
