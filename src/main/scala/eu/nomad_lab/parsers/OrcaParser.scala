@@ -21,8 +21,12 @@ object OrcaParser extends SimpleExternalParserGenerator(
       )) :: Nil
   ),
   mainFileTypes = Seq("text/.*"),
-  //TODO: Update the replacement string (mainFileRe)
-  mainFileRe = """ORCAORCAORCA""".r,
+  mainFileRe = """\s+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\**\s*
+\s+\* O   R   C   A \*\s*
+\s+\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\**\s*
+\s*
+\s*--- An Ab Initio, DFT and Semiempirical electronic structure package ---\s*
+""".r,
   cmd = Seq(DefaultPythonInterpreter.pythonExe(), "${envDir}/parsers/orca/parser/parser-orca/orca_parser.py",
     "--uri", "${mainFileUri}", "${mainFilePath}"),
   resList = Seq(
@@ -36,5 +40,6 @@ object OrcaParser extends SimpleExternalParserGenerator(
   dirMap = Map(
     "parser-orca" -> "parsers/orca/parser/parser-orca",
     "nomad_meta_info" -> "nomad-meta-info/meta_info/nomad_meta_info"
-  ) ++ DefaultPythonInterpreter.commonDirMapping()
+  ) ++ DefaultPythonInterpreter.commonDirMapping(),
+  metaInfoEnv = Some(lab.meta.KnownMetaInfoEnvs.orca)
 )
