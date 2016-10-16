@@ -1,5 +1,6 @@
 from builtins import object
 import setup_paths
+import numpy as np
 from nomadcore.simple_parser import SimpleMatcher, mainFunction
 from nomadcore.local_meta_info import loadJsonFile, InfoKindEl
 import os, sys, json, logging
@@ -45,7 +46,7 @@ class OrcaContext(object):
             pos[:,0] = x
        	    pos[:,1] = y
        	    pos[:,2] = z
-            backend.addArrayValue("atom_positions", pos)
+            backend.addArrayValues("atom_positions", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels"])
 
     def onClose_x_orca_final_geometry(self, backend, gIndex, value):
@@ -56,7 +57,7 @@ class OrcaContext(object):
             pos[:,0] = x
             pos[:,1] = y
             pos[:,2] = z
-            backend.addArrayValue("geometry_optimization_converged", pos)
+            backend.addArrayValues("geometry_optimization_converged", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels_geo_opt"])
 
 #    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
@@ -132,7 +133,7 @@ def buildSinglePointMatcher():
        # Get atomic positions:
        SM(name = 'Atomic Coordinates',
           startReStr = r"CARTESIAN COORDINATES \(ANGSTROEM\)\s*",
-          sections = ["x_orca_atom_positions"],
+          sections = ["x_orca_atom_positions", "section_basis_set"],
           subMatchers = [
           SM(r"\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z>[-+0-9.]+)", repeats = True)
           ]
@@ -239,7 +240,7 @@ def buildSinglePointMatcher():
 #      *****************************************************
        SM(name = 'Final step after convergence',
           startReStr = r"Setting up the final grid:",
-          sections = ["section_scf_iteration"],
+          sections = ["section_scf_iteration", "section_basis_set"],
           subMatchers = [
           # Final DFT Grid generation:
           SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy_final>[-+0-9.eEdD]+)"),
