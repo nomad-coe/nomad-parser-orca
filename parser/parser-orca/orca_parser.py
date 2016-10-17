@@ -193,12 +193,16 @@ def buildSinglePointMatcher():
           startReStr = r"\s*ORCA SCF\s*",
           sections = ["section_method"],
           subMatchers = [
+          # A - For HF methods:
+          SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_hf_method>[-+0-9a-zA-Z()]+)"),
+          # B - For DFT methods:
           SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_dft_method>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+0-9.eEdD]+)"),
           SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+0-9.eEdD]+)"),
           SM(r"\s+Correlation Functional\s+Correlation\s+\.\.\.\s+(?P<x_orca_correl_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+LDA part of GGA corr\.\s+LDAOpt\s+\.\.\.\s+(?P<x_orca_lda_part_of_gga_corr>[a-zA-Z-+0-9]+)"),
+          # Common settings:
           SM(r"\s+Scalar relativistic method\s+\.\.\.\s+(?P<x_orca_scalar_relativistic_method>[a-zA-Z-+0-9]+)"),
           SM(r"\s+Speed of light used\s+Velit\s+\.\.\.\s+(?P<x_orca_speed_of_light_used>[0-9.]+)"),
           SM(r"\s+Hartree-Fock type\s+HFTyps+\.\.\.\s+(?P<x_orca_hf_type>[a-zA-Z]+)"),
