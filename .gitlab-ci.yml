@@ -9,9 +9,9 @@ testing:
     - cd nomad-lab-base
     - git submodule foreach git checkout master
     - git submodule foreach git pull
-    - sbt ocra/test
+    - sbt orca/test
     - export PYTHONEXE=/labEnv/bin/python
-    - sbt ocra/test
+    - sbt orca/test
   only:
     - master
   tags:
