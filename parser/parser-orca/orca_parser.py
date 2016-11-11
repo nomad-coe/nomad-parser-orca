@@ -235,7 +235,7 @@ def buildSinglePointMatcher():
           startReStr = r"\s*SCF ITERATIONS\s*",
           sections = ["section_scf_iteration"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<x_orca_total_energy_scf__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<x_orca_scf_total_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           ]
        ),
 #      *****************************************************
@@ -396,7 +396,7 @@ def buildSinglePointMatcher():
           startReStr = r"\s*TOTAL SCF ENERGY\s*",
           sections = ["section_single_configuration_calculation"],
           subMatchers = [
-          SM(r"\s*Total Energy\s+:\s+(?P<x_orca_total_energy__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*Total Energy\s+:\s+(?P<energy_total__hartree>[-+0-9.eEdD]+)"),
           # Energy Components:
           SM(name = 'Final energy Components',
              startReStr = r"\s*Components:\s*",
