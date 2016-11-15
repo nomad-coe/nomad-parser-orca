@@ -269,35 +269,35 @@ def buildSinglePointSubMatchers():
           SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts_final>[-+0-9.eEdD]+)"),
           SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches_final>[-+0-9.eEdD]+)"),
           SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom_final>[-+0-9.eEdD]+)")
-          ]
-       ),
-       # Final SCF total Energy:
-       SM(name = 'Total Energy',
-          startReStr = r"\s*TOTAL SCF ENERGY\s*",
-          sections = [],
-          subMatchers = [
-          SM(r"\s*Total Energy\s+:\s+(?P<energy_total__hartree>[-+0-9.eEdD]+)"),
-          # Energy Components:
-          SM(name = 'Energy Components',
-             startReStr = r"\s*Components:\s*",
-             sections = ["section_single_configuration_calculation"],
+          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom_final>[-+0-9.eEdD]+)"),
+          # Final SCF total Energy:
+          SM(name = 'Total Energy',
+             startReStr = r"\s*TOTAL SCF ENERGY\s*",
+             sections = [],
              subMatchers = [
-             SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*One Electron Energy:\s+(?P<x_orca_one_elec_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*Two Electron Energy:\s+(?P<x_orca_two_elec_energy__hartree>[-+0-9.eEdD]+)"),
-             # Virial Components:
-             SM(r"\s*Potential Energy\s*:\s+(?P<x_orca_potential_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*Kinetic Energy\s*:\s+(?P<x_orca_kinetc_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*Virial Ratio\s*:\s+(?P<x_orca_virial_ratio>[-+0-9.eEdD]+)"),
-             # DFT Components:
-             SM(r"\s*N\(Alpha\)\s*:\s+(?P<x_orca_nb_elect_alpha_channel>[-+0-9.eEdD]+)"),
-             SM(r"\s*N\(Beta\)\s*:\s+(?P<x_orca_nb_elect_beta_channel>[-+0-9.eEdD]+)"),
-             SM(r"\s*N\(Total\)\s*:\s+(?P<x_orca_nb_elect_total>[-+0-9.eEdD]+)"),
-             SM(r"\s*E\(X\)\s*:\s+(?P<x_orca_exchange_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*E\(C\)\s*:\s+(?P<x_orca_correlation_energy__hartree>[-+0-9.eEdD]+)"),
-             SM(r"\s*E\(XC\)\s*:\s+(?P<x_orca_exchange_correlation_energy__hartree>[-+0-9.eEdD]+)")
+             SM(r"\s*Total Energy\s+:\s+(?P<energy_total__hartree>[-+0-9.eEdD]+)"),
+             # Energy Components:
+             SM(name = 'Energy Components',
+                startReStr = r"\s*Components:\s*",
+                sections = ["section_single_configuration_calculation"],
+                subMatchers = [
+                SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*One Electron Energy:\s+(?P<x_orca_one_elec_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*Two Electron Energy:\s+(?P<x_orca_two_elec_energy__hartree>[-+0-9.eEdD]+)"),
+                # Virial Components:
+                SM(r"\s*Potential Energy\s*:\s+(?P<x_orca_potential_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*Kinetic Energy\s*:\s+(?P<x_orca_kinetc_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*Virial Ratio\s*:\s+(?P<x_orca_virial_ratio>[-+0-9.eEdD]+)"),
+                # DFT Components:
+                SM(r"\s*N\(Alpha\)\s*:\s+(?P<x_orca_nb_elect_alpha_channel>[-+0-9.eEdD]+)"),
+                SM(r"\s*N\(Beta\)\s*:\s+(?P<x_orca_nb_elect_beta_channel>[-+0-9.eEdD]+)"),
+                SM(r"\s*N\(Total\)\s*:\s+(?P<x_orca_nb_elect_total>[-+0-9.eEdD]+)"),
+                SM(r"\s*E\(X\)\s*:\s+(?P<x_orca_exchange_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*E\(C\)\s*:\s+(?P<x_orca_correlation_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*E\(XC\)\s*:\s+(?P<x_orca_exchange_correlation_energy__hartree>[-+0-9.eEdD]+)")
+                ]
+             )
              ]
           ),
           # Final SCF convergence:
@@ -306,29 +306,29 @@ def buildSinglePointSubMatchers():
           SM(r"\s*Last RMS-Density change\s+\.\.\.\s+(?P<x_orca_last_rms_density_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<x_orca_last_rms_density_tolerance__hartree>[-+0-9.eEdD]+)")
           ]
        ),
-       # Orbitals Energies:
+       # Orbitals Energies and Mulliken population analysis:
        SM(name = 'Orbital Energies',
           startReStr = r"\s*ORBITAL ENERGIES\s*",
-          sections = ["section_dos"],
+          sections = ["section_single_configuration_calculation", "section_dos"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True)
+          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          # Mulliken population analysis:
+          SM(name = 'Mulliken population analysis',
+             startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
+             sections = [],
+             subMatchers = [
+             SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>[-+0-9.eEdD]+)", repeats = True),
+             SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
+             # Mulliken reduced orbital charges (mroc):
+             SM(r"\s*(?P<x_orca_atom_nb_mroc>[0-9]+)\s+(?P<x_orca_atom_species_mroc>[a-zA-Z]+)(?P<x_orca_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<x_orca_mulliken_partial_orbital_charge_mroc>[-+0-9.eEdD]+)", repeats = True)
+             ]
+          )
           ]
-       ),
-       # Mulliken population analysis:
-       SM(name = 'Mulliken population analysis',
-          startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
-          sections = ["section_dos"],
-          subMatchers = [
-          SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>[-+0-9.eEdD]+)", repeats = True),
-          SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
-          # Mulliken reduced orbital charges (mroc):
-          SM(r"\s*(?P<x_orca_atom_nb_mroc>[0-9]+)\s+(?P<x_orca_atom_species_mroc>[a-zA-Z]+)(?P<x_orca_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<x_orca_mulliken_partial_orbital_charge_mroc>[-+0-9.eEdD]+)", repeats = True)
-         ]
        ),
        # Time table:
        SM(name = 'timings',
           startReStr = r"\s*TIMINGS\s*",
-          sections = ["section_scf_iteration"],
+          sections = ["section_single_configuration_calculation", "section_scf_iteration"],
           subMatchers = [
           SM(r"\s*Total SCF time:\s+(?P<x_orca_total_days_time>[0-9]+) days (?P<x_orca_total_hours_time>[0-9]+) hours (?P<x_orca_total_mins_time>[0-9]+) min (?P<x_orca_total_secs_time>[0-9]+) sec"),
           SM(r"\s*Total time\s*\.\.\.\.\s*(?P<x_orca_final_time>[0-9.]+) sec"),
