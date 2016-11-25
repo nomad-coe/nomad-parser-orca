@@ -39,9 +39,9 @@ class OrcaContext(object):
         self.initialize_values()
 
     def onClose_x_orca_atom_positions(self, backend, gIndex, value):
-            x = value["x_orca_atom_positions_x"]
-       	    y = value["x_orca_atom_positions_y"]
-       	    z = value["x_orca_atom_positions_z"]
+            x = value["x_orca_atom_positions_x__angstrom"]
+       	    y = value["x_orca_atom_positions_y__angstrom"]
+       	    z = value["x_orca_atom_positions_z__angstrom"]
             pos = np.zeros((len(x),3), dtype=float)
             pos[:,0] = x
        	    pos[:,1] = y
@@ -50,9 +50,9 @@ class OrcaContext(object):
             backend.addValue("atom_labels", value["x_orca_atom_labels"])
 
     def onClose_x_orca_final_geometry(self, backend, gIndex, value):
-            x = value["x_orca_atom_positions_x_geo_opt"]
-            y = value["x_orca_atom_positions_y_geo_opt"]
-            z = value["x_orca_atom_positions_z_geo_opt"]
+            x = value["x_orca_atom_positions_x_geo_opt__angstrom"]
+            y = value["x_orca_atom_positions_y_geo_opt__angstrom"]
+            z = value["x_orca_atom_positions_z_geo_opt__angstrom"]
             pos = np.zeros((len(x),3), dtype=float)
             pos[:,0] = x
             pos[:,1] = y
@@ -142,7 +142,7 @@ def buildSinglePointSubMatchers():
           startReStr = r"CARTESIAN COORDINATES \(ANGSTROEM\)\s*",
           sections = ["section_system", "x_orca_atom_positions"],
           subMatchers = [
-          SM(r"\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z>[-+0-9.]+)", repeats = True)
+          SM(r"\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z__angstrom>[-+0-9.]+)", repeats = True)
           ]
        ),  
        # Get basis set information:
@@ -206,7 +206,7 @@ def buildSinglePointSubMatchers():
           # A - For HF methods:
           SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_hf_method>[-+0-9a-zA-Z()]+)"),
           # B - For DFT methods:
-          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_dft_method>[a-zA-Z()]+)"),
+          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<XC_functional_name>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+0-9.eEdD]+)"),
           SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+0-9.eEdD]+)"),
@@ -381,7 +381,7 @@ def buildGeoOptMatcher():
              startReStr = r"\s*\*\*\*\s*THE OPTIMIZATION HAS CONVERGED\s*\*\*\*\s*",
              sections = ["x_orca_final_geometry"],
              subMatchers = [
-             SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y_geo_opt>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt>[-+0-9.]+)", repeats = True)
+             SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y_geo_opt__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt__angstrom>[-+0-9.]+)", repeats = True)
              ]  
           ),
        # *** FINAL ENERGY EVALUATION AT THE STATIONARY POINT ***
