@@ -39,9 +39,9 @@ class OrcaContext(object):
         self.initialize_values()
 
     def onClose_x_orca_atom_positions(self, backend, gIndex, value):
-            x = value["x_orca_atom_positions_x__angstrom"]
-       	    y = value["x_orca_atom_positions_y__angstrom"]
-       	    z = value["x_orca_atom_positions_z__angstrom"]
+            x = value["x_orca_atom_positions_x"]
+       	    y = value["x_orca_atom_positions_y"]
+       	    z = value["x_orca_atom_positions_z"]
             pos = np.zeros((len(x),3), dtype=float)
             pos[:,0] = x
        	    pos[:,1] = y
@@ -50,9 +50,9 @@ class OrcaContext(object):
             backend.addValue("atom_labels", value["x_orca_atom_labels"])
 
     def onClose_x_orca_final_geometry(self, backend, gIndex, value):
-            x = value["x_orca_atom_positions_x_geo_opt__angstrom"]
-            y = value["x_orca_atom_positions_y_geo_opt__angstrom"]
-            z = value["x_orca_atom_positions_z_geo_opt__angstrom"]
+            x = value["x_orca_atom_positions_x_geo_opt"]
+            y = value["x_orca_atom_positions_y_geo_opt"]
+            z = value["x_orca_atom_positions_z_geo_opt"]
             pos = np.zeros((len(x),3), dtype=float)
             pos[:,0] = x
             pos[:,1] = y
