@@ -60,6 +60,146 @@ class OrcaContext(object):
             backend.addArrayValues("geometry_optimization_converged", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels_geo_opt"])
 
+    def onClose_x_orca_section_functionals(self, backend, gIndex, section):
+        functional_names = section["x_orca_XC_functional_type"]
+
+        if functional_names == None: functional = "HF" #default method is Hartree-Fock
+        else: functional = functional_names[-1]
+
+        if functional:
+            functionalMap = {
+
+		#***************************************
+		# Local functionals
+		#***************************************
+		# HFS: Hartree-Fock Slater 
+                "HF":     ["HF_X"],
+                "HFS":    ["HF_X"],
+		# XAlpha: The famous old Slater Xa theory
+		"XAlpha": ["HF_X", "LDA_C_XALPHA"],
+		# LSD: Local spin density (VWN-5A form)
+		"LSD":    ["LDA_X", "LDA_C_VWN_RPA", "VWN5_RPA"],
+                "LDA":    ["LDA_X", "LDA_C_VWN_RPA", "VWN5_RPA"],
+		# VWN5: Local spin density (VWN-5)
+		"VWN":    ["LDA_X", "LDA_C_VWN_RPA", "VWN5_RPA"],
+                "VWN5":   ["LDA_X", "LDA_C_VWN_RPA", "VWN5_RPA"],
+		# VWN3: Local spin density (VWN-3)
+		"VWN3":   ["LDA_X", "LDA_C_VWN_3"],
+		# PWLDA: Local spin density (PW-LDA)
+		"PWLDA":  ["LDA_X", "LDA_C_PW"],
+		#***************************************
+		# ’Pure’ GGA functionals
+		#***************************************
+		# BNULL: Becke ’88 exchange, no corr.
+		"BNULL":  ["GGA_X_B88"],
+		# BVWN: Becke ’88 exchane, VWN-5 corr.
+		"BVWN":   ["GGA_X_B88", "LDA_C_VWN_RPA", "VWN5_RPA"],
+		# BP: Becke X-Perdew 86 correlation
+		"BP":     ["LDA_X", "GGA_X_B88", "LDA_C_VWN", "GGA_C_P86"],
+		"BP86":   ["LDA_X", "GGA_X_B88", "LDA_C_VWN", "GGA_C_P86"],
+		# PW91: Perdew-Wang GGA-II ’91 func.
+		"PW91":   ["GGA_X_PW91", "GGA_C_PW91"],
+		# PWP: Perdew-Wang ’91 exchange and Perdew ’86 correlation
+                "PWP":    ["GGA_X_PW91", "GGA_C_P86"],
+		# mPWPW: Modified PW with PW correlation
+		"mPWPW":  ["GGA_X_MPW91", "GGA_C_PW91"],
+		# mPWLYP: same with LYP correlation
+		"mPWLYP": ["GGA_X_MPW91", "GGA_C_LYP"],
+		# BLYP: Becke X with LYP correlation
+		"BLYP":   ["GGA_X_B88", "GGA_C_LYP"],
+		# GP: Gill ’96 X, Perdew ’86 corr.
+		"GP":     ["GGA_X_G96", "GGA_C_P86"],
+		#GLYP: Gill ’96 X with LYP correlation
+		"GLYP":   ["GGA_X_G96", "GGA_C_LYP"],
+		# PBE: Perdew-Burke-Ernzerhof
+		"PBE":    ["GGA_X_PBE", "GGA_C_PBE"],
+		# revPBE: Revised PBE (exchange scaling)
+		"revPBE": ["GGA_X_PBE_R", "GGA_C_PBE"],
+		# RPBE: Revised PBE (functional form of X)
+		"RPBE":   ["GGA_X_RPBE", "GGA_C_PBE"],
+		# PWP: PW91 exchange + P86 correlation
+		"PW91":   ["GGA_X_PW91", "GGA_C_P86"]
+		# OLYP: the optimized exchange and LYP
+		"OLYP":   ["GGA_X_OPTX", "GGA_C_LYP"],
+		# OPBE: the optimized exchange and PBE
+		"OPBE":   ["GGA_XC_OPBE_D"],
+		#XLYP: the Xu/Goddard exchange and LYP
+		"XLYP":   ["GGA_XC_XLYP"],
+		# B97-D: Grimme’s GGA including D2 dispersion correction
+		"B97-D":  ["GGA_XC_B97_D"],
+                "B97-D3": ["GGA_XC_B97_D"],
+		#***************************************
+		# Meta GGA and hybrid meta-GGA functals.
+		#***************************************
+		# TPSS: the TPPS functional
+		"TPSS":   ["LDA_X", "MGGA_X_TPSS", "LDA_C_PW", "MGGA_C_TPSS"],
+		# TPSSh: The hybrid version of TPSS (10% HF exchange)
+		"TPSSh":  ["HYB_MGGA_XC_TPSSH"],
+		# TPSS0: A 25% exchange version of TPSSh that yields improved energetics 
+                # compared to TPSSh but is otherwise not well tested
+		# "TPSS0":  ["HYB_MGGA_XC_TPSSH"],
+		# M06L: The Minnesota M06-L meta-GGA functional
+		"M06L":   ["MGGA_X_M06_L", "MGGA_C_M06_L"],
+		# M06: The M06 hybrid meta-GGA (27% HF exchange)
+		"M06":    ["MGGA_X_M06", "MGGA_C_M06"],
+		# M062X: The M06-2X version with 54% HF exchange
+		"M062X":  ["MGGA_X_M06_2X", "MGGA_C_M06_2X"],
+		#***************************************
+		# Hybrid functionals
+		#***************************************
+		# B1LYP: One parameter Hybrid of BLYP
+		"B1LYP":     ["HYB_GGA_XC_B1LYP"],
+		# B3LYP: Three parameter Hybrid of BLYP
+                "B3LYP":     ["HYB_GGA_XC_B3LYP"],
+		# B1P: Analogous with Perdew exchange (The one-parameter hybrid version of BP86)
+		"B1P":       ["HYB_GGA_XC_B1PW91"],
+		# B3P: Analogous with Perdew exchange (The three-parameter hybrid version of BP86)
+		"B3P":       ["HYB_GGA_XC_B3P86"],
+		# B3PW: The three-parameter hybrid version of PW91
+		"B3PW":      ["HYB_GGA_XC_B3PW91"],
+		# G1LYP: 1 par. analog with Gill 96 X
+		"G1LYP":     ["GGA_X_G96", "GGA_C_OP_G96"],
+		# G3LYP: 3 par. analog with Gill 96 X
+		# G1P: similar with P correlation
+		# G3P # similar with P correlation
+		# PBE0: 1 parameter version of PBE (PBEH, PBE0)
+		"PBE0":      ["HYB_GGA_XC_PBEH"],
+		# PW1PW: One-parameter hybrid version of PW91
+		"PW1PW":     ["HYB_GGA_XC_B1PW91"],
+                "PWP91_1":   ["HYB_GGA_XC_B1PW91"],
+		"PWP1":      ["HYB_GGA_XC_B1PW91"],
+		# mPW1PW: 1 parameter version of mPWPW
+		"mPW1PW":    ["HYB_GGA_XC_MPW1PW"],
+		# mPW1LYP: One-parameter hybrid version of mPWLYP
+		"mPW1LYP":   ["HYB_GGA_XC_MPWLYP1M"],
+		# O3LYP: 3 parameter version of OLYP
+		"O3LYP":     ["HYB_GGA_XC_O3LYP"],
+		# X3LYP: 3 parameter version of XLYP
+		"X3LYP":     ["HYB_GGA_XC_X3LYP"],
+		# PW6B95: Hybrid functional by Truhlar [93]
+		"PW6B95":    ["HYB_MGGA_XC_PW6B95"],
+		# B97: Becke’s original hybrid
+		"B97":       ["HYB_GGA_XC_B97"],
+		# BHANDHLYP: Half-and-half Becke hybrid functional
+		"BHANDHLYP": ["HYB_GGA_XC_BHANDHLYP"],
+		#***************************************
+		# Double Hybrid functionals (mix in MP2)
+		#***************************************
+		# B2PLYP: Grimme’s 2006 double hybrid
+		"B2PLYP":    ["HYB_GGA_XC_B2PLYP"],
+		# mPW2PLYP: Schwabe/Grimme improved double hybrid
+		"mB2PLYP":   ["HYB_GGA_XC_MB2PLYP"],
+		# PWPB95: New Grimme double hybrid [94]
+		"PWPB95":    ["HYB_MGGA_XC_MPW1B95"]
+            }
+        nomadNames = functionalMap.get(functional)
+        if not nomadNames:
+            raise Exception("Unhandled xc functional %s found" % functional)
+        for name in nomadNames:
+            s = backend.openSection("section_XC_functionals")
+            backend.addValue('XC_functional_name', name)
+            backend.closeSection("section_XC_functionals", s)
+
 #    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
 #            x = value["x_orca_orbital_nb"]
 #            y = value["x_orca_orbital_occupation_nb"]
