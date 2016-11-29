@@ -118,9 +118,9 @@ class OrcaContext(object):
 		# RPBE: Revised PBE (functional form of X)
 		"RPBE":   ["GGA_X_RPBE", "GGA_C_PBE"],
 		# PWP: PW91 exchange + P86 correlation
-		"PW91":   ["GGA_X_PW91", "GGA_C_P86"]
-		# OLYP: the optimized exchange and LYP
-		"OLYP":   ["GGA_X_OPTX", "GGA_C_LYP"],
+		"PW91":   ["GGA_X_PW91", "GGA_C_P86"],
+		# OLYP: Handy’s ‘optimal’ exchange and Lee-Yang-Parr correlation (the optimized exchange and LYP)
+		"OLYP":   ["GGA_X_OPTX", "GGA_C_LYP", "GGA_XC_OPWLYP_D"],
 		# OPBE: the optimized exchange and PBE
 		"OPBE":   ["GGA_XC_OPBE_D"],
 		#XLYP: the Xu/Goddard exchange and LYP
@@ -338,15 +338,15 @@ def buildSinglePointSubMatchers():
        # SCF Settings:
        SM(name = 'Orca SCF settings',
           startReStr = r"\s*ORCA SCF\s*",
-          sections = ["section_method"],
+          sections = ["section_method", "x_orca_section_functionals"],
           fixedStartValues = {
               "electronic_structure_method": "DFT"
           },
           subMatchers = [
           # A - For HF methods:
-          SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_hf_method>[-+0-9a-zA-Z()]+)"),
+          SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_XC_functional_type>[-+0-9a-zA-Z()]+)"),
           # B - For DFT methods:
-          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<XC_functional_name>[a-zA-Z()]+)"),
+          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_XC_functional_type>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+0-9.eEdD]+)"),
           SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+0-9.eEdD]+)"),
