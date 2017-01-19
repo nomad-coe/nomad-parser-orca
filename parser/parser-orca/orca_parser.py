@@ -200,16 +200,17 @@ class OrcaContext(object):
             backend.addValue('XC_functional_name', name)
             backend.closeSection("section_XC_functionals", s)
 
-#    def onClose_x_orca_orbital_energies(self, backend, gIndex, value):
-#            x = value["x_orca_orbital_nb"]
-#            y = value["x_orca_orbital_occupation_nb"]
-#            z = value["x_orca_orbital_energy"]
-#            orbitals = np.zeros((len(x),3), dtype=float)
-#            orbitals[:,0] = x
-#            orbitals[:,1] = y
-#            orbitals[:,2] = z
-#            backend.addArrayValue("eigenvalues_occupation", orbitals)
-#
+    def onClose_section_eigenvalues(self, backend, gIndex, value):
+        number_of_eigenvalues = value["x_orca_orbital_nb"][-1] + 1
+        backend.addValue("number_of_eigenvalues", number_of_eigenvalues)
+        backend.addValue("number_of_eigenvalues_kpoints", 1)
+
+        occupations = np.array(value["x_orca_orbital_occupation_nb"])
+        backend.addArrayValues("eigenvalues_occupation", occupations.reshape([1, 1, number_of_eigenvalues]))
+
+        eigenvalues = np.array(value["x_orca_orbital_energy"])
+        backend.addArrayValues("eigenvalues_values", eigenvalues.reshape([1, 1, number_of_eigenvalues]))
+
 #    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
 #            x = value["x_orca_atom_labels"]
 #            y = value["x_orca_basis_set"]
@@ -449,7 +450,7 @@ def buildSinglePointSubMatchers():
        # Orbitals Energies and Mulliken population analysis:
        SM(name = 'Orbital Energies',
           startReStr = r"\s*ORBITAL ENERGIES\s*",
-          sections = ["section_single_configuration_calculation", "section_dos"],
+          sections = ["section_single_configuration_calculation", "section_dos", "section_eigenvalues"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+.0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           # Mulliken population analysis:
