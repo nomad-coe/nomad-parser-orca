@@ -451,7 +451,7 @@ def buildSinglePointSubMatchers():
           startReStr = r"\s*ORBITAL ENERGIES\s*",
           sections = ["section_single_configuration_calculation", "section_dos"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+.0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           # Mulliken population analysis:
           SM(name = 'Mulliken population analysis',
              startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
