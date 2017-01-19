@@ -454,7 +454,6 @@ def buildSinglePointSubMatchers():
              # Energy Components:
              SM(name = 'Energy Components',
                 startReStr = r"\s*Components:\s*",
-                sections = ["section_single_configuration_calculation"],
                 subMatchers = [
                 SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
                 SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
@@ -484,7 +483,7 @@ def buildSinglePointSubMatchers():
        # Orbitals Energies and Mulliken population analysis:
        SM(name = 'Orbital Energies',
           startReStr = r"\s*ORBITAL ENERGIES\s*",
-          sections = ["section_single_configuration_calculation", "section_dos", "section_eigenvalues"],
+          sections = ["section_dos", "section_eigenvalues"],
           subMatchers = [
           SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+.0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           # Mulliken population analysis:
@@ -503,7 +502,6 @@ def buildSinglePointSubMatchers():
        # Time table:
        SM(name = 'timings',
           startReStr = r"\s*TIMINGS\s*",
-          sections = ["section_single_configuration_calculation", "section_scf_iteration"],
           subMatchers = [
           SM(r"\s*Total SCF time:\s+(?P<x_orca_total_days_time>[0-9]+) days (?P<x_orca_total_hours_time>[0-9]+) hours (?P<x_orca_total_mins_time>[0-9]+) min (?P<x_orca_total_secs_time>[0-9]+) sec"),
           SM(r"\s*Total time\s*\.\.\.\.\s*(?P<x_orca_final_time>[0-9.]+) sec"),
