@@ -23,10 +23,11 @@ class OrcaContext(object):
 
     def __init__(self):
         self.parser = None
+        self.CalculationGIndex = None
 
     def initialize_values(self):
         """allows to reset values if the same superContext is used to parse different files"""
-        pass
+        self.CalculationGIndex = None
 
     def startedParsing(self, path, parser):
         """called when parsing starts"""
@@ -43,10 +44,10 @@ class OrcaContext(object):
        	    y = value["x_orca_atom_positions_y"]
        	    z = value["x_orca_atom_positions_z"]
             pos = np.zeros((len(x),3), dtype=float)
-            pos[:,0] = x
-       	    pos[:,1] = y
-       	    pos[:,2] = z
-            backend.addArrayValues("atom_positions", pos)
+            pos[:, 0] = x
+       	    pos[:, 1] = y
+       	    pos[:, 2] = z
+            backend .addArrayValues("atom_positions", pos)
             backend.addValue("atom_labels", value["x_orca_atom_labels"])
 
     def onClose_x_orca_final_geometry(self, backend, gIndex, value):
@@ -200,6 +201,21 @@ class OrcaContext(object):
             backend.addValue('XC_functional_name', name)
             backend.closeSection("section_XC_functionals", s)
 
+    def onClose_section_method(self, backend, gIndex, value):
+        if value["electronic_structure_method"][-1] == "TDDFT":
+            gi = backend.openSection("section_method_to_method_refs")
+            backend.addValue("method_to_method_ref", (gIndex - 1))
+            backend.addValue("method_to_method_kind", 'starting_point')
+            backend.closeSection("section_method_to_method_refs", gi)
+
+            gi = backend.openSection("section_calculation_to_calculation_refs")
+            backend.addValue("calculation_to_calculation_ref", (self.CalculationGIndex - 1))
+            backend.addValue("calculation_to_calculation_kind", 'starting_point')
+            backend.closeSection("section_calculation_to_calculation_refs", gi)
+
+    def onOpen_section_single_configuration_calculation(self, backend, gIndex, value):
+        self.CalculationGIndex = gIndex
+
     def onClose_section_eigenvalues(self, backend, gIndex, value):
         number_of_eigenvalues = value["x_orca_orbital_nb"][-1] + 1
         backend.addValue("number_of_eigenvalues", number_of_eigenvalues)
@@ -210,6 +226,23 @@ class OrcaContext(object):
 
         eigenvalues = np.array(value["x_orca_orbital_energy"])
         backend.addArrayValues("eigenvalues_values", eigenvalues.reshape([1, 1, number_of_eigenvalues]))
+
+    def onClose_section_excited_states(self, backend, gIndex, value):
+        number_of_excited_states = len(value["x_orca_excitation_energy"])
+        backend.addValue("number_of_excited_states", number_of_excited_states)
+
+        backend.addArrayValues("excitation_energies", np.array(value["x_orca_excitation_energy"]))
+
+        backend.addArrayValues("oscillator_strengths", np.array(value["x_orca_oscillator_strength"]))
+
+        x = value["x_orca_transition_dipole_moment_x"]
+        y = value["x_orca_transition_dipole_moment_y"]
+        z = value["x_orca_transition_dipole_moment_z"]
+        tdm = np.zeros((number_of_excited_states,3), dtype=float)
+        tdm[:, 0] = x
+        tdm[:, 1] = y
+        tdm[:, 2] = z
+        backend.addArrayValues("transition_dipole_moments", tdm)
 
 #    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
 #            x = value["x_orca_atom_labels"]
@@ -262,7 +295,8 @@ def build_OrcaMainFileSimpleMatcher():
             buildSinglePointMatcher(),
             buildGeoOptMatcher(),
             buildMp2Matcher(),
-            buildCIMatcher()
+            buildCIMatcher(),
+            buildTDDFTMatcher()
             ])
 
 def buildSinglePointMatcher():
@@ -616,6 +650,24 @@ def buildCIMatcher():
           SM(r"\s*E\(CCSD\(T\)\)\s*\.\.\.\s*(?P<energy_total__hartree>[-+0-9.eEdD]+)")
           ]
        )
+
+def buildTDDFTMatcher():
+    # TDDFT Calculation (post-proc):
+    return SM(name='tddft',
+              startReStr=r"\s*ORCA TD-DFT/TDA CALCULATION\s*",
+              sections=["section_single_configuration_calculation", "section_method", "section_excited_states"],
+              fixedStartValues={
+                  "electronic_structure_method": "TDDFT"
+              },
+              subMatchers=[
+              SM(r"\s*ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS\s*"),
+              SM(r"\s*[0-9]+\s+(?P<x_orca_excitation_energy__inversecm>[-+.0-9]+)\s+[-+.0-9]+\s+(?P<x_orca_oscillator_strength>[-+0-9.eEdD]+)"
+                 r"\s+[-+.0-9]+\s+(?P<x_orca_transition_dipole_moment_x__bohr>[-+.0-9]+)\s+(?P<x_orca_transition_dipole_moment_y__bohr>[-+.0-9]+)"
+                 r"\s+(?P<x_orca_transition_dipole_moment_z__bohr>[-+.0-9]+)\s*", repeats = True),
+              SM(r"\s*ABSORPTION SPECTRUM VIA TRANSITION VELOCITY DIPOLE MOMENTS\s*")
+              ]
+        )
+
        # Here new stuff:
 #       SM(name = '',
 #          startReStr = r"",
