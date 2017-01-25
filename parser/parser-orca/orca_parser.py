@@ -419,9 +419,10 @@ def buildSinglePointSubMatchers():
        # SCF iterations:
        SM(name = 'Orca SCF iterations',
           startReStr = r"\s*SCF ITERATIONS\s*",
-          sections = ["section_scf_iteration"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<energy_total_scf_iteration__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<energy_total_scf_iteration__hartree>[-+0-9.eEdD]+)",
+             sections = ["section_scf_iteration"],
+             repeats = True),
           ]
        ),
 #      *****************************************************
