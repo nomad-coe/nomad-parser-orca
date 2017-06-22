@@ -594,9 +594,9 @@ def buildCIMatcher():
     return SM(name = 'CI',
           startReStr = r"\s*ORCA-MATRIX DRIVEN CI\s*",
           sections = ["section_method", "section_single_configuration_calculation"],
-          fixedStartValues = {
-              "electronic_structure_method": "CI"
-          },
+#          fixedStartValues = {
+#              "electronic_structure_method": "CI"
+#          },
           subMatchers = [
           SM(r"\s*Correlation treatment\s*\.\.\.\s*(?P<electronic_structure_method>[()a-zA-Z0-9.]+)"),
           SM(r"\s*Single excitations\s*\.\.\.\s*(?P<x_orca_single_excitations_on_off>[a-zA-Z]+)"),
