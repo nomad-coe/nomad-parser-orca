@@ -218,14 +218,18 @@ class OrcaContext(object):
         self.CalculationGIndex = gIndex
 
     def onClose_section_eigenvalues(self, backend, gIndex, value):
-        number_of_eigenvalues = value["x_orca_orbital_nb"][-1] + 1
+        occupations = np.array(value["x_orca_orbital_occupation_nb"])
+        eigenvalues = np.array(value["x_orca_orbital_energy"])
+
+        number_of_eigenvalues = len(eigenvalues)
         backend.addValue("number_of_eigenvalues", number_of_eigenvalues)
         backend.addValue("number_of_eigenvalues_kpoints", 1)
 
         occupations = np.array(value["x_orca_orbital_occupation_nb"])
+        eigenvalues = np.array(value["x_orca_orbital_energy"])
+
         backend.addArrayValues("eigenvalues_occupation", occupations.reshape([1, 1, number_of_eigenvalues]))
 
-        eigenvalues = np.array(value["x_orca_orbital_energy"])
         backend.addArrayValues("eigenvalues_values", eigenvalues.reshape([1, 1, number_of_eigenvalues]))
 
     def onClose_section_excited_states(self, backend, gIndex, value):
