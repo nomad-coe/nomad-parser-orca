@@ -249,21 +249,14 @@ class OrcaContext(object):
         tdm[:, 2] = z
         backend.addArrayValues("transition_dipole_moments", tdm)
 
-#    def onClose_x_orca_basis_set_info(self, backend, gIndex, value):
-#            x = value["x_orca_atom_labels"]
-#            y = value["x_orca_basis_set"]
-#            z = value["x_orca_basis_set_contracted"]
-#            basisSet = np.zeros((len(x),3), dtype=float)
-#            basisSet[:,0] = x
-#            basisSet[:,1] = y
-#            basisSet[:,2] = z
-#            backend.addArrayValue("program_basis_set_type", 'Gaussian' + basisSet)
-#
-#    def onClose_x_orca_program_name(self, backend, gIndex, value):
-#            x = 'ORCA'
-#            y = value["x_orca_program_version"]
-#            z = value["x_orca_program_compilation_date"]
-#            backend.addValue("program_name", x + y + z)
+    def onClose_section_run(self, backend, gIndex, value):
+        versionPieces = [value[x] for x in ["x_orca_program_version", "x_orca_program_svn", "x_orca_program_compilation_date", "x_orca_program_compilation_time"]]
+        version = []
+        for v in versionPieces:
+            if v:
+                version.append(v[0])
+        if version:
+            backend.addValue("program_version", " ".join(version))
 
 ##########################################################
 ############    [2] MAIN PARSER STARTS HERE   ############
@@ -290,13 +283,15 @@ def build_OrcaMainFileSimpleMatcher():
         startReStr = r"\s*\* O  R  C  A \*\s*",
         forwardMatch = True,
         sections = ["section_run"],
+        fixedStartValues = {"program_name": "ORCA", "program_basis_set_type": "Gaussians" },
         subMatchers = [
             SM(name = 'ProgramHeader',
-               startReStr = r"\s*\* O  R  C  A \*\s*",
+               startReStr = r"\s*\* O   ?R   ?C   ?A \*\s*",
                subMatchers = [
-                    SM(r"\s*Program Version\s*(?P<x_orca_program_version>[0-9a-zA-Z_.]*)"),
-                    SM(r" *\(\$Date\: *(?P<x_orca_program_compilation_date>[0-9/]+) at (?P<x_orca_program_compilation_time>[0-9:]+)")
-                    ]),
+                   SM(r"\s*Program Version\s*(?P<x_orca_program_version>[0-9a-zA-Z_.].*)"),
+                   SM(r"\s*\(SVN:\s*\$(?P<x_orca_program_svn>[^$]+)\$\)\s*"),
+                   SM(r"\s*\(\$Date\:\s*(?P<x_orca_program_compilation_date>[0-9a-zA-Z].+?)\s*\$\)")
+                   ]),
             buildSinglePointMatcher(),
             buildGeoOptMatcher(),
             buildMp2Matcher(),
