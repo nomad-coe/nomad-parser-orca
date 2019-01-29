@@ -77,7 +77,7 @@ class OrcaContext(object):
             backend.addValue("atom_labels", value["x_orca_atom_labels_geo_opt"])
 
     def onClose_x_orca_section_functionals(self, backend, gIndex, section):
-        functional_names = section["x_orca_XC_functional_type"]
+        functional_names = section["x_orca_xc_functional_type"]
 
         if functional_names == None: functional = "HF" #default method is Hartree-Fock
         else: functional = functional_names[-1]
@@ -212,9 +212,9 @@ class OrcaContext(object):
         if not nomadNames:
             raise Exception("Unhandled xc functional %s found" % functional)
         for name in nomadNames:
-            s = backend.openSection("section_XC_functionals")
-            backend.addValue('XC_functional_name', name)
-            backend.closeSection("section_XC_functionals", s)
+            s = backend.openSection("section_xc_functionals")
+            backend.addValue('xc_functional_name', name)
+            backend.closeSection("section_xc_functionals", s)
 
     def onClose_section_method(self, backend, gIndex, value):
         if value["electronic_structure_method"][-1] == "TDDFT":
@@ -393,9 +393,9 @@ def buildSinglePointSubMatchers():
           },
           subMatchers = [
           # A - For HF methods:
-          SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_XC_functional_type>[-+0-9a-zA-Z()]+)"),
+          SM(r"\s+Ab initio Hamiltonian\s+Method\s+\.\.\.\s+(?P<x_orca_xc_functional_type>[-+0-9a-zA-Z()]+)"),
           # B - For DFT methods:
-          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_XC_functional_type>[a-zA-Z()]+)"),
+          SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_xc_functional_type>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+0-9.eEdD]+)"),
           SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+0-9.eEdD]+)"),
@@ -615,7 +615,7 @@ def buildCIMatcher():
           SM(r"\s*Single excitations\s*\.\.\.\s*(?P<x_orca_single_excitations_on_off>[a-zA-Z]+)"),
           SM(r"\s*Orbital optimization\s*\.\.\.\s*(?P<x_orca_orbital_opt_on_off>[a-zA-Z]+)"),
           SM(r"\s*Calculation of Z vector\s*\.\.\.\s*(?P<x_orca_z_vector_calc_on_off>[a-zA-Z]+)"),
-          SM(r"\s*Calculation of Brueckner orbitals\s*\.\.\.\s*(?P<x_orca_Brueckner_orbitals_calc_on_off>[a-zA-Z]+)"),
+          SM(r"\s*Calculation of Brueckner orbitals\s*\.\.\.\s*(?P<x_orca_brueckner_orbitals_calc_on_off>[a-zA-Z]+)"),
           SM(r"\s*Perturbative triple excitations\s*\.\.\.\s*(?P<x_orca_perturbative_triple_excitations_on_off>[a-zA-Z]+)"),
           SM(r"\s*Calculation of F12 correction\s*\.\.\.\s*(?P<x_orca_f12_correction_on_off>[a-zA-Z]+)"),
           SM(r"\s*Frozen core treatment\s*\.\.\.\s*(?P<x_orca_frozen_core_treatment>[0-9.a-zA-Z( )]+)"),
@@ -624,7 +624,7 @@ def buildCIMatcher():
           SM(r"\s*Number of electrons\s*\.\.\.\s*(?P<x_orca_nb_of_electrons>[0-9]+)"),
           SM(r"\s*Number of correlated electrons\s*\.\.\.\s*(?P<x_orca_nb_of_correlated_electrons>[0-9]+)"),
           SM(r"\s*Integral transformation\s*\.\.\.\s*(?P<x_orca_integral_transformation>[a-zA-Z( )]+)"),
-          SM(r"\s*K\(C\) Formation\s*\.\.\.\s*(?P<x_orca_K_C_formation>[+-a-zA-Z( )]+)"),
+          SM(r"\s*K\(C\) Formation\s*\.\.\.\s*(?P<x_orca_k_c_formation>[+-a-zA-Z( )]+)"),
           SM(r"\s*Convergence tolerance \(max\. residuum\)\s*\.\.\.\s*(?P<x_orca_convergence_tol_max_residuum>[-+0-9.eEdD]+)"),
           SM(r"\s*Level shift for amplitude update\s*\.\.\.\s*(?P<x_orca_level_shift_amplitude_update>[-+0-9.eEdD]+)"),
           # Partial Coulomb Transformation:
@@ -644,10 +644,10 @@ def buildCIMatcher():
           SM(r"\s*E\(0\)\s*\.\.\.\s*(?P<x_orca_mp2_initial_guess__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*E\(MP2\)\s*\.\.\.\s*(?P<x_orca_mp2_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*Initial E\(tot\)\s*\.\.\.\s*(?P<x_orca_mp2_total_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_T_and_T_energy__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_t_and_t_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           # iterations (e.g.:UHF COUPLED CLUSTER ITERATIONS):
-          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltae_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
           # Final Coupled Cluster Energies:
           SM(r"\s*E\(CORR\)\s*\.\.\.\s*(?P<x_orca_ccsd_correlation_energy__hartree>[-+0-9.eEdD]+)"),
           SM(r"\s*E\(TOT\)\s*\.\.\.\s*(?P<x_orca_ccsd_total_energy__hartree>[-+0-9.eEdD]+)"),
