@@ -1,11 +1,11 @@
 # Copyright 2016-2018 Sebastian Alarcon Villaseca, Sebastián Alarcón Villaseca, Fawzi Mohamed, Micael Oliveira, Ankit Kariryaa, Danio Brambila
-# 
+#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 #   Unless required by applicable law or agreed to in writing, software
 #   distributed under the License is distributed on an "AS IS" BASIS,
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +14,6 @@
 
 # -*- coding: utf-8 -*
 from builtins import object
-import setup_paths
 import numpy as np
 from nomadcore.simple_parser import SimpleMatcher, mainFunction
 from nomadcore.local_meta_info import loadJsonFile, InfoKindEl
@@ -88,7 +87,7 @@ class OrcaContext(object):
 		#***************************************
 		# Local functionals
 		#***************************************
-		# HFS: Hartree-Fock Slater 
+		# HFS: Hartree-Fock Slater
                 "HF":     ["HF_X"],
                 "HFS":    ["HF_X"],
 		# XAlpha: The famous old Slater Xa theory
@@ -151,7 +150,7 @@ class OrcaContext(object):
 		"TPSS":   ["LDA_X", "MGGA_X_TPSS", "LDA_C_PW", "MGGA_C_TPSS"],
 		# TPSSh: The hybrid version of TPSS (10% HF exchange)
 		"TPSSh":  ["HYB_MGGA_XC_TPSSH"],
-		# TPSS0: A 25% exchange version of TPSSh that yields improved energetics 
+		# TPSS0: A 25% exchange version of TPSSh that yields improved energetics
                 # compared to TPSSh but is otherwise not well tested
 		# "TPSS0":  ["HYB_MGGA_XC_TPSSH"],
 		# M06L: The Minnesota M06-L meta-GGA functional
@@ -285,7 +284,7 @@ def build_OrcaMainFileSimpleMatcher():
     which allows nice formating of nested SimpleMatchers in python.
 
     Returns:
-       SimpleMatcher that parses main file of ORCA. 
+       SimpleMatcher that parses main file of ORCA.
     """
 #
 # a) SimpleMatcher for header and ORCA version:
@@ -333,7 +332,7 @@ def buildSinglePointSubMatchers():
           subMatchers = [
           SM(r"\s+(?P<x_orca_atom_labels>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z__angstrom>[-+0-9.]+)", repeats = True)
           ]
-       ),  
+       ),
        # Get basis set information:
        SM(name = 'Basis set information',
           startReStr = r"BASIS SET INFORMATION\s*",
@@ -349,7 +348,7 @@ def buildSinglePointSubMatchers():
              SM(r"\s*Group\s+[0-9]+\s+Type\s+(?P<x_orca_basis_set_atom_labels>[a-zA-Z]+)\s+:\s+(?P<x_orca_auxiliary_basis_set>[0-9a-z]+)\s+contracted\s+to\s+(?P<x_orca_auxiliary_basis_set_contracted>[0-9a-z]+)\s+pattern\s+\{[0-9/]+\}", repeats = True)
              ]
           )
-          ]   
+          ]
        ),
        # Basis set statistics and startup info:
        SM(name = 'Basis set statistics and startup info',
@@ -544,7 +543,7 @@ def buildGeoOptMatcher():
 #
 # c) SimpleMatcher for geometry optimization:
 # *******************************************
-# 
+#
        return SM(name = 'Geometry optimization',
           startReStr = r"\s*\* Geometry Optimization Run \*\s*",
           sections = ["section_sampling_method"],
@@ -570,7 +569,7 @@ def buildGeoOptMatcher():
              sections = ["x_orca_final_geometry"],
              subMatchers = [
              SM(r"\s+(?P<x_orca_atom_labels_geo_opt>[a-zA-Z]+)\s+(?P<x_orca_atom_positions_x_geo_opt__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_y_geo_opt__angstrom>[-+0-9.]+)\s+(?P<x_orca_atom_positions_z_geo_opt__angstrom>[-+0-9.]+)", repeats = True)
-             ]  
+             ]
           ),
        # *** FINAL ENERGY EVALUATION AT THE STATIONARY POINT ***
        #
@@ -586,7 +585,7 @@ def buildMp2Matcher():
 #
 # d) Post-processing calculations:
 # ********************************
-# 
+#
        # MP2 Calculation (post-proc):
     return SM(name = 'mp2',
           startReStr = r"\s*ORCA MP2 CALCULATION\s*",
@@ -711,8 +710,29 @@ parserInfo = {
   "version": "1.0"
 }
 
-metaInfoPath = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../nomad-meta-info/meta_info/nomad_meta_info/orca.nomadmetainfo.json"))
+import nomad_meta_info
+metaInfoPath = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(nomad_meta_info.__file__)), "orca.nomadmetainfo.json"))
 metaInfoEnv, warnings = loadJsonFile(filePath = metaInfoPath, dependencyLoader = None, extraArgsHandling = InfoKindEl.ADD_EXTRA_ARGS, uri = None)
+
+class OrcaParser():
+   """ A proper class envolop for running this parser from within python. """
+   def __init__(self, backend, **kwargs):
+       self.backend_factory = backend
+
+   def parse(self, mainfile):
+       from unittest.mock import patch
+       logging.info('orca parser started')
+       logging.getLogger('nomadcore').setLevel(logging.WARNING)
+       backend = self.backend_factory(metaInfoEnv)
+       with patch.object(sys, 'argv', ['<exe>', '--uri', 'nmd://uri', mainfile]):
+           mainFunction(
+               mainFileDescription,
+               metaInfoEnv,
+               parserInfo,
+               superContext=OrcaContext(),
+               superBackend=backend)
+
+       return backend
 
 if __name__ == "__main__":
     mainFunction(mainFileDescription, metaInfoEnv, parserInfo, superContext=OrcaContext())

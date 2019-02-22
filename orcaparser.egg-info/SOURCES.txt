@@ -1,0 +1,10 @@
+README.md
+setup.py
+./orcaparser/__init__.py
+./orcaparser/parser.py
+./orcaparser/setup_paths.py
+./orcaparser.egg-info/PKG-INFO
+./orcaparser.egg-info/SOURCES.txt
+./orcaparser.egg-info/dependency_links.txt
+./orcaparser.egg-info/requires.txt
+./orcaparser.egg-info/top_level.txt
