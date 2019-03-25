@@ -359,26 +359,26 @@ def buildSinglePointSubMatchers():
           SM(name = 'Gaussian basis set',
              startReStr = r"\s*Gaussian basis set:\s*",
              subMatchers = [
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_shells>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian functions\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_functions>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of contracted shells\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_shells>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of contracted basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions>[-+0-9.eEdD]+)"),
-             SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment>[-+0-9.eEdD]+)"),
-             SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells>[-+0-9.eEdD]+)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_shells>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of primitive gaussian functions\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_functions>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of contracted shells\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_shells>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of contracted basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
              ]
           ),
           # Gaussian auxiliary basis set:
           SM(name = 'Gaussian auxiliary basis set',
              startReStr = r"\s*Auxiliary gaussian basis set:\s*",
              subMatchers = [
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_shells_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian functions\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_functions_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of contracted shells\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_shells_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of contracted aux-basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth_aux>[-+0-9.eEdD]+)"),
-             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells_aux>[-+0-9.eEdD]+)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_shells_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of primitive gaussian functions\s+\.\.\.\s+(?P<x_orca_nb_of_primitive_gaussian_functions_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of contracted shells\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_shells_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of contracted aux-basis functions\s+\.\.\.\s+(?P<x_orca_nb_of_contracted_basis_functions_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+Highest angular momentum\s+\.\.\.\s+(?P<x_orca_highest_angular_moment_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+Maximum contraction depth\s+\.\.\.\s+(?P<x_orca_maximum_contraction_depth_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+             SM(r"\s+# of primitive gaussian shells\s+\.\.\.\s+(?P<x_orca_nb_primitive_gaussian_shells_aux>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
              ]
           )
           ]
@@ -396,43 +396,43 @@ def buildSinglePointSubMatchers():
           # B - For DFT methods:
           SM(r"\s+Density Functional\s+Method\s+\.\.\.\s+(?P<x_orca_XC_functional_type>[a-zA-Z()]+)"),
           SM(r"\s+Exchange Functional\s+Exchange\s+\.\.\.\s+(?P<x_orca_exchange_functional>[a-zA-Z0-9]+)"),
-          SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+0-9.eEdD]+)"),
-          SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+0-9.eEdD]+)"),
+          SM(r"\s+X-Alpha parameter\s+XAlpha\s+\.\.\.\s+(?P<x_orca_xalpha_param>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Becke's b parameter\s+XBeta\s+\.\.\.\s+(?P<x_orca_beckes_beta_param>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           SM(r"\s+Correlation Functional\s+Correlation\s+\.\.\.\s+(?P<x_orca_correl_functional>[a-zA-Z0-9]+)"),
           SM(r"\s+LDA part of GGA corr\.\s+LDAOpt\s+\.\.\.\s+(?P<x_orca_lda_part_of_gga_corr>[a-zA-Z-+0-9]+)"),
           # Common settings:
           SM(r"\s+Scalar relativistic method\s+\.\.\.\s+(?P<x_orca_scalar_relativistic_method>[a-zA-Z-+0-9]+)"),
           SM(r"\s+Speed of light used\s+Velit\s+\.\.\.\s+(?P<x_orca_speed_of_light_used>[0-9.]+)"),
           SM(r"\s+Hartree-Fock type\s+HFTyps+\.\.\.\s+(?P<x_orca_hf_type>[a-zA-Z]+)"),
-          SM(r"\s+Total Charge\s+Charge\s+\.\.\.\s+(?P<x_orca_total_charge>[-+0-9.eEdD]+)"),
-          SM(r"\s+Multiplicity\s+Mult\s+\.\.\.\s+(?P<x_orca_multiplicity>[-+0-9.eEdD]+)"),
-          SM(r"\s+Number of Electrons\s+NEL\s+\.\.\.\s+(?P<x_orca_nelectrons>[-+0-9.eEdD]+)"),
-          SM(r"\s+Nuclear Repulsion\s+ENuc\s+\.\.\.\s+(?P<x_orca_nuclear_repulsion__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s+Total Charge\s+Charge\s+\.\.\.\s+(?P<x_orca_total_charge>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Multiplicity\s+Mult\s+\.\.\.\s+(?P<x_orca_multiplicity>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Number of Electrons\s+NEL\s+\.\.\.\s+(?P<x_orca_nelectrons>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Nuclear Repulsion\s+ENuc\s+\.\.\.\s+(?P<x_orca_nuclear_repulsion__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           # Convergence Tolerance:
           SM(r"\s+Convergence Check Mode ConvCheckMode\s*\.\.\.\s+(?P<x_orca_convergence_check_mode>[a-zA-Z-+0-9.eEdD_-]+)"),
-          SM(r"\s+Energy Change\s+TolE\s*\.\.\.\s+(?P<x_orca_energy_change_tolerance__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s+1-El\. energy change\s*\.\.\.\s+(?P<x_orca_1_elect_energy_change__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s+Energy Change\s+TolE\s*\.\.\.\s+(?P<x_orca_energy_change_tolerance__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+1-El\. energy change\s*\.\.\.\s+(?P<x_orca_1_elect_energy_change__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           # DFT Grid generation:
-          SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy>[-+0-9.eEdD]+)"),
+          SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           SM(r"\s+Radial Grid Type\s+RadialGrid\s*\.\.\.\s+(?P<x_orca_radial_grid_type>[a-zA-Z-_]+)"),
           SM(r"\s+Angular Grid \(max\. acc\.\)\s+AngularGrid\s*\.\.\.\s+(?P<x_orca_angular_grid>[a-zA-Z-+0-9.eEdD-_]+)"),
           SM(r"\s+Angular grid pruning method\s+GridPruning\s*\.\.\.\s+(?P<x_orca_grid_pruning_method>[a-zA-Z-+0-9.eEdD-_]+)"),
           SM(r"\s+Weight generation scheme\s*WeightScheme\s*\.\.\.\s+(?P<x_orca_weight_gener_scheme>[a-zA-Z0-9]+)"),
-          SM(r"\s+Basis function cutoff\s+BFCut\s*\.\.\.\s+(?P<x_orca_basis_fn_cutoff>[-+0-9.eEdD]+)"),
-          SM(r"\s+Integration weight cutoff\s+WCut\s*\.\.\.\s+(?P<x_orca_integr_weight_cutoff>[-+0-9.eEdD]+)"),
-          SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_initial_pruning>[-+0-9.eEdD]+)"),
-          SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_weights_screening>[-+0-9.eEdD]+)"),
-          SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts>[-+0-9.eEdD]+)"),
-          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches>[-+0-9.eEdD]+)"),
-          SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch>[-+0-9.eEdD]+)"),
-          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom>[-+0-9.eEdD]+)")
+          SM(r"\s+Basis function cutoff\s+BFCut\s*\.\.\.\s+(?P<x_orca_basis_fn_cutoff>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Integration weight cutoff\s+WCut\s*\.\.\.\s+(?P<x_orca_integr_weight_cutoff>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_initial_pruning>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_weights_screening>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)")
           ]
        ),
        # SCF iterations:
        SM(name = 'Orca SCF iterations',
           startReStr = r"\s*SCF ITERATIONS\s*",
           subMatchers = [
-          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<energy_total_scf_iteration__hartree>[-+0-9.eEdD]+)",
+          SM(r"\s*(?P<x_orca_iteration_nb>[0-9]+)\s+(?P<energy_total_scf_iteration__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)",
              sections = ["section_scf_iteration"],
              repeats = True),
           ]
@@ -446,52 +446,52 @@ def buildSinglePointSubMatchers():
           sections = ["section_scf_iteration", "section_basis_set"],
           subMatchers = [
           # Final DFT Grid generation:
-          SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+General Integration Accuracy\s+IntAcc\s*\.\.\.\s+(?P<x_orca_gral_integ_accuracy_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           SM(r"\s+Radial Grid Type\s+RadialGrid\s*\.\.\.\s+(?P<x_orca_radial_grid_type_final>[a-zA-Z-_]+)"),
           SM(r"\s+Angular Grid \(max\. acc\.\)\s+AngularGrid\s*\.\.\.\s+(?P<x_orca_angular_grid_final>[a-zA-Z-+0-9.eEdD-_]+)"),
           SM(r"\s+Angular grid pruning method\s+GridPruning\s*\.\.\.\s+(?P<x_orca_grid_pruning_method_final>[a-zA-Z-+0-9.eEdD-_]+)"),
           SM(r"\s+Weight generation scheme\s*WeightScheme\s*\.\.\.\s+(?P<x_orca_weight_gener_scheme_final>[a-zA-Z0-9]+)"),
-          SM(r"\s+Basis function cutoff\s+BFCut\s*\.\.\.\s+(?P<x_orca_basis_fn_cutoff_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Integration weight cutoff\s+WCut\s*\.\.\.\s+(?P<x_orca_integr_weight_cutoff_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_initial_pruning_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_weights_screening_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch_final>[-+0-9.eEdD]+)"),
-          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom_final>[-+0-9.eEdD]+)"),
+          SM(r"\s+Basis function cutoff\s+BFCut\s*\.\.\.\s+(?P<x_orca_basis_fn_cutoff_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Integration weight cutoff\s+WCut\s*\.\.\.\s+(?P<x_orca_integr_weight_cutoff_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+# of grid points \(after initial pruning\)\s+WCut\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_initial_pruning_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+# of grid points \(after weights\+screening\)\s*\.\.\.\s+(?P<x_orca_nb_grid_pts_after_weights_screening_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Total number of grid points\s*\.\.\.\s+(?P<x_orca_total_nb_grid_pts_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Total number of batches\s*\.\.\.\s+(?P<x_orca_total_nb_batches_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Average number of points per batch\s*\.\.\.\s+(?P<x_orca_avg_nb_points_per_batch_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s+Average number of grid points per atom\s*\.\.\.\s+(?P<x_orca_avg_nb_grid_pts_per_atom_final>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           # Final SCF total Energy:
           SM(name = 'Total Energy',
              startReStr = r"\s*TOTAL SCF ENERGY\s*",
              sections = [],
              subMatchers = [
-             SM(r"\s*Total Energy\s+:\s+(?P<energy_total__hartree>[-+0-9.eEdD]+)"),
+             SM(r"\s*Total Energy\s+:\s+(?P<energy_total__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
              # Energy Components:
              SM(name = 'Energy Components',
                 startReStr = r"\s*Components:\s*",
                 subMatchers = [
-                SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*One Electron Energy:\s+(?P<x_orca_one_elec_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*Two Electron Energy:\s+(?P<x_orca_two_elec_energy__hartree>[-+0-9.eEdD]+)"),
+                SM(r"\s*Nuclear Repulsion\s*:\s+(?P<x_orca_nuc_repulsion__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*Electronic Energy\s*:\s+(?P<x_orca_elec_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*One Electron Energy:\s+(?P<x_orca_one_elec_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*Two Electron Energy:\s+(?P<x_orca_two_elec_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
                 # Virial Components:
-                SM(r"\s*Potential Energy\s*:\s+(?P<x_orca_potential_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*Kinetic Energy\s*:\s+(?P<x_orca_kinetc_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*Virial Ratio\s*:\s+(?P<x_orca_virial_ratio>[-+0-9.eEdD]+)"),
+                SM(r"\s*Potential Energy\s*:\s+(?P<x_orca_potential_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*Kinetic Energy\s*:\s+(?P<x_orca_kinetc_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*Virial Ratio\s*:\s+(?P<x_orca_virial_ratio>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
                 # DFT Components:
-                SM(r"\s*N\(Alpha\)\s*:\s+(?P<x_orca_nb_elect_alpha_channel>[-+0-9.eEdD]+)"),
-                SM(r"\s*N\(Beta\)\s*:\s+(?P<x_orca_nb_elect_beta_channel>[-+0-9.eEdD]+)"),
-                SM(r"\s*N\(Total\)\s*:\s+(?P<x_orca_nb_elect_total>[-+0-9.eEdD]+)"),
-                SM(r"\s*E\(X\)\s*:\s+(?P<x_orca_exchange_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*E\(C\)\s*:\s+(?P<x_orca_correlation_energy__hartree>[-+0-9.eEdD]+)"),
-                SM(r"\s*E\(XC\)\s*:\s+(?P<x_orca_exchange_correlation_energy__hartree>[-+0-9.eEdD]+)")
+                SM(r"\s*N\(Alpha\)\s*:\s+(?P<x_orca_nb_elect_alpha_channel>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*N\(Beta\)\s*:\s+(?P<x_orca_nb_elect_beta_channel>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*N\(Total\)\s*:\s+(?P<x_orca_nb_elect_total>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*E\(X\)\s*:\s+(?P<x_orca_exchange_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*E\(C\)\s*:\s+(?P<x_orca_correlation_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+                SM(r"\s*E\(XC\)\s*:\s+(?P<x_orca_exchange_correlation_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)")
                 ]
              )
              ]
           ),
           # Final SCF convergence:
-          SM(r"\s*Last Energy change\s+\.\.\.\s+(?P<x_orca_last_energy_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<x_orca_last_energy_change_tolerance__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Last MAX-Density change\s+\.\.\.\s+(?P<x_orca_last_max_density_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<x_orca_last_max_density_tolerance__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Last RMS-Density change\s+\.\.\.\s+(?P<x_orca_last_rms_density_change__hartree>[-+0-9.eEdD]+)\s+Tolerance :\s*(?P<x_orca_last_rms_density_tolerance__hartree>[-+0-9.eEdD]+)")
+          SM(r"\s*Last Energy change\s+\.\.\.\s+(?P<x_orca_last_energy_change__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+Tolerance :\s*(?P<x_orca_last_energy_change_tolerance__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Last MAX-Density change\s+\.\.\.\s+(?P<x_orca_last_max_density_change__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+Tolerance :\s*(?P<x_orca_last_max_density_tolerance__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Last RMS-Density change\s+\.\.\.\s+(?P<x_orca_last_rms_density_change__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+Tolerance :\s*(?P<x_orca_last_rms_density_tolerance__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)")
           ]
        ),
        # Orbitals Energies and Mulliken population analysis:
@@ -499,16 +499,16 @@ def buildSinglePointSubMatchers():
           startReStr = r"\s*ORBITAL ENERGIES\s*",
           sections = ["section_dos", "section_eigenvalues"],
           subMatchers = [
-          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+.0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_orbital_nb>[0-9]+)\s+(?P<x_orca_orbital_occupation_nb>[-+.0-9]+)\s+(?P<x_orca_orbital_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)", repeats = True),
           # Mulliken population analysis:
           SM(name = 'Mulliken population analysis',
              startReStr = r"\s*\* MULLIKEN POPULATION ANALYSIS \*\s*",
              sections = [],
              subMatchers = [
-             SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>[-+0-9.eEdD]+)", repeats = True),
-             SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+0-9.eEdD]+)"),
+             SM(r"\s*(?P<x_orca_atom_nb>[0-9]+)\s+(?P<x_orca_atom_species>[a-zA-Z]+):\s+(?P<x_orca_mulliken_atom_charge>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)", repeats = True),
+             SM(r"\s*Sum of atomic charges:\s*(?P<x_orca_mulliken_total_charge>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
              # Mulliken reduced orbital charges (mroc):
-             SM(r"\s*(?P<x_orca_atom_nb_mroc>[0-9]+)\s+(?P<x_orca_atom_species_mroc>[a-zA-Z]+)(?P<x_orca_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<x_orca_mulliken_partial_orbital_charge_mroc>[-+0-9.eEdD]+)", repeats = True)
+             SM(r"\s*(?P<x_orca_atom_nb_mroc>[0-9]+)\s+(?P<x_orca_atom_species_mroc>[a-zA-Z]+)(?P<x_orca_atom_orbital_mroc>[-+0-9a-zA-Z]+)\s*:\s*(?P<x_orca_mulliken_partial_orbital_charge_mroc>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)", repeats = True)
              ]
           )
           ]
@@ -552,11 +552,11 @@ def buildGeoOptMatcher():
           SM(r"Update method\s*(?P<x_orca_update_method>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_update_method_name>[a-zA-Z]+)"),
           SM(r"Choice of coordinates\s*(?P<x_orca_coords_choice>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_coords_choice_name>[a-zA-Z ]+)"),
           SM(r"Initial Hessian\s*(?P<x_orca_initial_hessian>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_initial_hessian_name>[a-zA-Z'\( \)]+)"),
-          SM(r"Energy Change\s*(?P<x_orca_energy_change_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_energy_change_tol_value__hartree>[-+0-9.eEdD]+) Eh"),
-          SM(r"Max\. Gradient\s*(?P<x_orca_max_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
-          SM(r"RMS Gradient\s*(?P<x_orca_rms_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_gradient_tol_value__hartree_bohr_1>[-+0-9.eEdD]+) Eh/bohr"),
-          SM(r"Max\. Displacement\s*(?P<x_orca_max_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_displacement_tol_value__bohr>[-+0-9.eEdD]+) bohr"),
-          SM(r"RMS Displacement\s*(?P<x_orca_rms_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_displacement_tol_value__bohr>[-+0-9.eEdD]+) bohr"),
+          SM(r"Energy Change\s*(?P<x_orca_energy_change_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_energy_change_tol_value__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh"),
+          SM(r"Max\. Gradient\s*(?P<x_orca_max_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_gradient_tol_value__hartree_bohr_1>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh/bohr"),
+          SM(r"RMS Gradient\s*(?P<x_orca_rms_gradient_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_gradient_tol_value__hartree_bohr_1>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh/bohr"),
+          SM(r"Max\. Displacement\s*(?P<x_orca_max_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_max_displacement_tol_value__bohr>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) bohr"),
+          SM(r"RMS Displacement\s*(?P<x_orca_rms_displacement_tol>[a-zA-Z]+)\s+\.\.\.\.\s+(?P<x_orca_rms_displacement_tol_value__bohr>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) bohr"),
           SM(name="geoOptCycle",
              startReStr=r"\s*\*\s*GEOMETRY OPTIMIZATION CYCLE\s*(?P<x_orca_geo_opt_cycle>[0-9]+)\s*\*\s*",
              sections = ["section_single_configuration_calculation"],
@@ -595,10 +595,10 @@ def buildMp2Matcher():
           },
           subMatchers = [
           SM(r"\s*Dimension of the basis\s*\.\.\.\s*(?P<x_orca_mp2_basis_dimension>[0-9.]+)"),
-          SM(r"\s*Overall scaling of the MP2 energy\s*\.\.\.\s*(?P<x_orca_scaling_mp2_energy__hartree>[-+0-9.eEdD]+) Eh"),
+          SM(r"\s*Overall scaling of the MP2 energy\s*\.\.\.\s*(?P<x_orca_scaling_mp2_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh"),
           SM(r"\s*Dimension of the aux-basis\s*\.\.\.\s*(?P<x_orca_mp2_aux_basis_dimension>[0-9.]+)"),
-          SM(r"\s*RI-MP2 CORRELATION ENERGY:\s*(?P<energy_method_current__hartree>[-+0-9.eEdD]+) Eh"),
-          SM(r"\s*MP2 TOTAL ENERGY:\s*(?P<energy_total__hartree>[-+0-9.eEdD]+) Eh")
+          SM(r"\s*RI-MP2 CORRELATION ENERGY:\s*(?P<energy_method_current__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh"),
+          SM(r"\s*MP2 TOTAL ENERGY:\s*(?P<energy_total__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh")
           ]
        )
 def buildCIMatcher():
@@ -624,42 +624,42 @@ def buildCIMatcher():
           SM(r"\s*Number of correlated electrons\s*\.\.\.\s*(?P<x_orca_nb_of_correlated_electrons>[0-9]+)"),
           SM(r"\s*Integral transformation\s*\.\.\.\s*(?P<x_orca_integral_transformation>[a-zA-Z( )]+)"),
           SM(r"\s*K\(C\) Formation\s*\.\.\.\s*(?P<x_orca_K_C_formation>[+-a-zA-Z( )]+)"),
-          SM(r"\s*Convergence tolerance \(max\. residuum\)\s*\.\.\.\s*(?P<x_orca_convergence_tol_max_residuum>[-+0-9.eEdD]+)"),
-          SM(r"\s*Level shift for amplitude update\s*\.\.\.\s*(?P<x_orca_level_shift_amplitude_update>[-+0-9.eEdD]+)"),
+          SM(r"\s*Convergence tolerance \(max\. residuum\)\s*\.\.\.\s*(?P<x_orca_convergence_tol_max_residuum>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Level shift for amplitude update\s*\.\.\.\s*(?P<x_orca_level_shift_amplitude_update>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           # Partial Coulomb Transformation:
           SM(r"\s*Transformation type\s*\.\.\.\s*(?P<x_orca_coulomb_transformation_type>[a-zA-Z ()]+)"),
           SM(r"\s*Dimension of the basis\s*\.\.\.\s*(?P<x_orca_coulomb_transformation_dimension_basis>[0-9]+)"),
           SM(r"\s*Number of internal alpha-MOs\s*\.\.\.\s*(?P<x_orca_nb_internal_alpha_mol_orbitals>[-+0-9( )]+)"),
           SM(r"\s*Number of internal beta-MOs\s*\.\.\.\s*(?P<x_orca_nb_internal_beta_mol_orbitals>[-+0-9( )]+)"),
-          SM(r"\s*Pair cutoff\s*\.\.\.\s*(?P<x_orca_pair_cutoff__hartree>[-+0-9.eEdD]+) Eh"),
+          SM(r"\s*Pair cutoff\s*\.\.\.\s*(?P<x_orca_pair_cutoff__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?) Eh"),
           SM(r"\s*AO-integral source\s*\.\.\.\s*(?P<x_orca_atomic_orbital_integral_source>[a-zA-Z]+)"),
           SM(r"\s*Integral package used\s*\.\.\.\s*(?P<x_orca_integral_package_used>[a-zA-Z]+)"),
           SM(r"\s*Number of Alpha-MO pairs included\s*\.\.\.\s*(?P<x_orca_nb_alpha_pairs_included>[0-9]+)"),
           SM(r"\s*Number of Beta-MO pairs included\s*\.\.\.\s*(?P<x_orca_nb_beta_pairs_included>[0-9]+)"),
           # Spin-unrestricted guess:
-          SM(r"\s*EMP2\(aa\)=\s*(?P<x_orca_mp2_energy_spin_aa__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*EMP2\(bb\)=\s*(?P<x_orca_mp2_energy_spin_bb__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*EMP2\(ab\)=\s*(?P<x_orca_mp2_energy_spin_ab__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*E\(0\)\s*\.\.\.\s*(?P<x_orca_mp2_initial_guess__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*E\(MP2\)\s*\.\.\.\s*(?P<x_orca_mp2_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Initial E\(tot\)\s*\.\.\.\s*(?P<x_orca_mp2_total_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_T_and_T_energy__hartree>[-+0-9.eEdD]+)"),
+          SM(r"\s*EMP2\(aa\)=\s*(?P<x_orca_mp2_energy_spin_aa__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*EMP2\(bb\)=\s*(?P<x_orca_mp2_energy_spin_bb__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*EMP2\(ab\)=\s*(?P<x_orca_mp2_energy_spin_ab__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*E\(0\)\s*\.\.\.\s*(?P<x_orca_mp2_initial_guess__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*E\(MP2\)\s*\.\.\.\s*(?P<x_orca_mp2_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Initial E\(tot\)\s*\.\.\.\s*(?P<x_orca_mp2_total_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*<T\|T>\s*\.\.\.\s*(?P<x_orca_T_and_T_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
           SM(r"\s*Number of pairs included\s*\.\.\.\s*(?P<x_orca_total_nb_pairs_included>[0-9]+)"),
           # iterations (e.g.:UHF COUPLED CLUSTER ITERATIONS):
-          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_correl_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_residual_energy__hartree>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_iteration_time>[-+0-9.eEdD]+)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+0-9.eEdD]+)", repeats = True),
+          SM(r"\s*(?P<x_orca_ci_iteration_nb>[0-9]+)\s+(?P<x_orca_ci_total_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+(?P<x_orca_ci_correl_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+(?P<x_orca_ci_deltaE_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+(?P<x_orca_ci_residual_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+(?P<x_orca_ci_iteration_time>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s+(?P<x_orca_ci_half_s_and_s_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)", repeats = True),
           # Final Coupled Cluster Energies:
-          SM(r"\s*E\(CORR\)\s*\.\.\.\s*(?P<x_orca_ccsd_correlation_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*E\(TOT\)\s*\.\.\.\s*(?P<x_orca_ccsd_total_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Singles norm <S\|S>\*\*1/2\s*\.\.\.\s*(?P<x_orca_single_norm_half_ss__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*T1 diagnostic\s*\.\.\.\s*(?P<x_orca_t1_diagnostic__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Triples Correction (T)\s*\.\.\.\s*(?P<x_orca_ccsdt_total_triples_correction__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*alpha-alpha-alpha\s*\.\.\.\s*(?P<x_orca_ccsdt_aaa_triples_contribution__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*alpha-alpha-beta\s*\.\.\.\s*(?P<x_orca_ccsdt_aab_triples_contribution__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*alpha-beta -beta\s*\.\.\.\s*(?P<x_orca_ccsdt_aba_triples_contribution__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*beta -beta -beta\s*\.\.\.\s*(?P<x_orca_ccsdt_bbb_triples_contribution__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*Final correlation energy\s*\.\.\.\s*(?P<x_orca_ccsdt_final_corr_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*E\(CCSD\)\s*\.\.\.\s*(?P<x_orca_ccsd_final_energy__hartree>[-+0-9.eEdD]+)"),
-          SM(r"\s*E\(CCSD\(T\)\)\s*\.\.\.\s*(?P<energy_total__hartree>[-+0-9.eEdD]+)")
+          SM(r"\s*E\(CORR\)\s*\.\.\.\s*(?P<x_orca_ccsd_correlation_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*E\(TOT\)\s*\.\.\.\s*(?P<x_orca_ccsd_total_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Singles norm <S\|S>\*\*1/2\s*\.\.\.\s*(?P<x_orca_single_norm_half_ss__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*T1 diagnostic\s*\.\.\.\s*(?P<x_orca_t1_diagnostic__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Triples Correction (T)\s*\.\.\.\s*(?P<x_orca_ccsdt_total_triples_correction__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*alpha-alpha-alpha\s*\.\.\.\s*(?P<x_orca_ccsdt_aaa_triples_contribution__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*alpha-alpha-beta\s*\.\.\.\s*(?P<x_orca_ccsdt_aab_triples_contribution__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*alpha-beta -beta\s*\.\.\.\s*(?P<x_orca_ccsdt_aba_triples_contribution__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*beta -beta -beta\s*\.\.\.\s*(?P<x_orca_ccsdt_bbb_triples_contribution__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*Final correlation energy\s*\.\.\.\s*(?P<x_orca_ccsdt_final_corr_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*E\(CCSD\)\s*\.\.\.\s*(?P<x_orca_ccsd_final_energy__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"),
+          SM(r"\s*E\(CCSD\(T\)\)\s*\.\.\.\s*(?P<energy_total__hartree>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)")
           ]
        )
 
@@ -673,7 +673,7 @@ def buildTDDFTMatcher():
               },
               subMatchers=[
               SM(r"\s*ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS\s*"),
-              SM(r"\s*[0-9]+\s+(?P<x_orca_excitation_energy__inversecm>[-+.0-9]+)\s+[-+.0-9]+\s+(?P<x_orca_oscillator_strength>[-+0-9.eEdD]+)"
+              SM(r"\s*[0-9]+\s+(?P<x_orca_excitation_energy__inversecm>[-+.0-9]+)\s+[-+.0-9]+\s+(?P<x_orca_oscillator_strength>[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"
                  r"\s+[-+.0-9]+\s+(?P<x_orca_transition_dipole_moment_x__bohr>[-+.0-9]+)\s+(?P<x_orca_transition_dipole_moment_y__bohr>[-+.0-9]+)"
                  r"\s+(?P<x_orca_transition_dipole_moment_z__bohr>[-+.0-9]+)\s*", repeats = True),
               SM(r"\s*ABSORPTION SPECTRUM VIA TRANSITION VELOCITY DIPOLE MOMENTS\s*")
