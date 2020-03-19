@@ -54,3 +54,5 @@ TAGS
 
 lib/
 env/
+
+orcaparser.egg-info/
