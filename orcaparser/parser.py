@@ -710,10 +710,6 @@ parserInfo = {
   "version": "1.0"
 }
 
-import nomad_meta_info
-metaInfoPath = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(nomad_meta_info.__file__)), "orca.nomadmetainfo.json"))
-metaInfoEnv, warnings = loadJsonFile(filePath = metaInfoPath, dependencyLoader = None, extraArgsHandling = InfoKindEl.ADD_EXTRA_ARGS, uri = None)
-
 class OrcaParser():
    """ A proper class envolop for running this parser from within python. """
    def __init__(self, backend, **kwargs):
@@ -723,16 +719,13 @@ class OrcaParser():
        from unittest.mock import patch
        logging.info('orca parser started')
        logging.getLogger('nomadcore').setLevel(logging.WARNING)
-       backend = self.backend_factory(metaInfoEnv)
+       backend = self.backend_factory("orca.nomadmetainfo.json")
        with patch.object(sys, 'argv', ['<exe>', '--uri', 'nmd://uri', mainfile]):
            mainFunction(
                mainFileDescription,
-               metaInfoEnv,
+               None,
                parserInfo,
                superContext=OrcaContext(),
                superBackend=backend)
 
        return backend
-
-if __name__ == "__main__":
-    mainFunction(mainFileDescription, metaInfoEnv, parserInfo, superContext=OrcaContext())
