@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-from orcaparser.parser import OrcaParser
+from orcaparser.orca_parser import OrcaParser
