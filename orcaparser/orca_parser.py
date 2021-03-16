@@ -27,7 +27,7 @@ from nomad.parsing.file_parser import TextParser, Quantity
 
 from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
     BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, Eigenvalues, Dos,\
-    SamplingMethod
+    SamplingMethod, ExcitedStates
 
 
 class OutParser(TextParser):
@@ -270,8 +270,9 @@ class OutParser(TextParser):
             Quantity(
                 'absorption_spectrum_electric',
                 r'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS\s*'
-                r'\-+[\s\S]+?\-\n([\s\S]+?)\n\n',
-                str_operation=lambda x: np.array([v.split() for v in x.strip().split('\n')]))]
+                r'\-+[\s\S]+?\-+\n([\s\S]+?)\-{10}',
+                str_operation=lambda x: np.array(
+                    [v.split() for v in x.strip().split('\n')]))]
 
         # TODO parse more properties, add to metainfo
         mp2_quantities = [
@@ -457,7 +458,7 @@ class OutParser(TextParser):
                 sub_parser=TextParser(quantities=self_consistent_quantities)),
             Quantity(
                 'tddft',
-                r'ORCA TD\-DFT/TDA CALCULATION\s*\-+\s*([\s\S]+?E\(tot\).*)',
+                r'ORCA TD\-DFT(?:/TDA)* CALCULATION\s*\-+\s*([\s\S]+?E\(tot\).*)',
                 sub_parser=TextParser(quantities=tddft_quantities)),
             Quantity(
                 'mp2',
@@ -765,6 +766,18 @@ class OrcaParser(FairdiParser):
                         c[1] for c in orbital_charges.atom[n].charge]
 
             sec_dos.x_orca_mulliken_total_charge = atomic_charges.total_charge
+
+        # excitations
+        spectrum = section.get('tddft', {}).get('absorption_spectrum_electric')
+        if spectrum is not None:
+            sec_excited = sec_scc.m_create(ExcitedStates)
+            spectrum = np.transpose(spectrum)
+            sec_excited.x_orca_excitation_energy = pint.Quantity(
+                spectrum[1], '1/cm').to('1/m').magnitude
+            sec_excited.x_orca_oscillator_strength = spectrum[3]
+            sec_excited.x_orca_transition_dipole_moment_x = spectrum[5]
+            sec_excited.x_orca_transition_dipole_moment_y = spectrum[6]
+            sec_excited.x_orca_transition_dipole_moment_z = spectrum[7]
 
         # timings
         timings = self_consistent.get('timings', {})
