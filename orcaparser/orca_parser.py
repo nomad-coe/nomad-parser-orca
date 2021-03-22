@@ -147,7 +147,7 @@ class OutParser(TextParser):
                         rf'Sum of atomic charges\s*:\s*({re_float})', dtype=float)])),
             Quantity(
                 'orbital_charges',
-                r'[A-Z]+ REDUCED ORBITAL CHARGES\s*\-+([\s\S]+?\n\n)',
+                r'[A-Z]+ REDUCED ORBITAL CHARGES.*\s*\-+([\s\S]+?\n\n)',
                 sub_parser=TextParser(quantities=[
                     Quantity(
                         'atom',
@@ -201,13 +201,13 @@ class OutParser(TextParser):
                         rf'Number of Electrons\s*NEL\s*\.+\s*({re_float})', dtype=float),
                     Quantity(
                         'nuclear_repulsion',
-                        rf'Nuclear Repulsion\s*ENuc\s*\.+\s*({re_float})', dtype=float),
+                        rf'Nuclear Repulsion\s*ENuc\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
                     Quantity(
                         'convergence_check_mode',
                         r'Convergence Check Mode ConvCheckMode\s*\.+\s*(\S+)', convert=False),
                     Quantity(
                         'energy_change_tolerance',
-                        rf'Energy Change\s*TolE\s*\.+\s*({re_float})', dtype=float),
+                        rf'Energy Change\s*TolE\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
                     Quantity(
                         '1_elect_energy_change',
                         rf'1\-El\. energy change\s*\.+\s*({re_float})', dtype=float)])),
@@ -599,9 +599,15 @@ class OrcaParser(FairdiParser):
     def parse_method(self, section):
         sec_method = self.archive.section_run[-1].m_create(Method)
 
+        # TODO identify DFT+U
+        sec_method.electronic_structure_method = 'DFT'
+
         scf_settings = section.get('self_consistent', {}).get('scf_settings', {})
         for key, val in scf_settings.items():
             if val is not None:
+                if hasattr(val, 'units'):
+                    if val.units == 'hartree':
+                        val = val.to('joule').magnitude
                 setattr(sec_method, 'x_orca_%s' % key, val)
 
         dft_grid_generation = section.get('self_consistent', {}).get('dft_grid_generation', {})
@@ -657,6 +663,7 @@ class OrcaParser(FairdiParser):
                 continue
             method = calculation.get('electronic_structure_method')
             method = calculation_type.upper() if method is None else method
+            sec_method = self.archive.section_run[-1].m_create(Method)
             sec_method.electronic_structure_method = method
 
             for key, val in calculation.items():
@@ -740,13 +747,28 @@ class OrcaParser(FairdiParser):
                     key = key.rstrip('_change') if 'density' in key else key
                     setattr(sec_scf_iteration, 'x_orca_%s_tolerance' % key, val[1])
 
+        # method-specific quantities
+        for calculation_type in ['tddft', 'mp2', 'ci']:
+            calculation = section.get(calculation_type)
+            if calculation is None:
+                continue
+            for key, val in calculation.items():
+                if hasattr(val, 'units'):
+                    if val.units == 'hartree':
+                        val = val.to('joule').magnitude
+                setattr(sec_scc, 'x_orca_%s' % key, val)
+
         # eigenvalues
         orbital_energies = self_consistent.get('orbital_energies')
         if orbital_energies is not None:
             sec_eigenvalues = sec_scc.m_create(Eigenvalues)
             orbital_energies = np.transpose(orbital_energies[:2])
-            sec_eigenvalues.eigenvalues_occupation = orbital_energies[1].T
-            sec_eigenvalues.eigenvalues_values = pint.Quantity(orbital_energies[2].T, 'hartree')
+            occupation = orbital_energies[1].T
+            sec_eigenvalues.eigenvalues_occupation = np.reshape(
+                occupation, (len(occupation), 1, len(occupation[0])))
+            values = orbital_energies[2].T
+            sec_eigenvalues.eigenvalues_values = pint.Quantity(
+                np.reshape(values, (len(values), 1, len(values[0]))), 'hartree')
 
         # mulliken
         mulliken = self_consistent.get('mulliken')
