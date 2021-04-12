@@ -37,28 +37,28 @@ def test_scf(parser):
     sec_method = archive.section_run[0].section_method[0]
     assert sec_method.electronic_structure_method == 'DFT'
     assert sec_method.x_orca_nelectrons == 14.0
-    assert pytest.approx(sec_method.x_orca_energy_change_tolerance, 4.35974472220717e-26)
+    assert sec_method.x_orca_energy_change_tolerance == pytest.approx(4.35974472220717e-26)
     assert sec_method.x_orca_radial_grid_type == 'Gauss-Chebyshev'
     assert len(sec_method.section_XC_functionals) == 4
     assert sec_method.section_XC_functionals[2].XC_functional_name == 'GGA_C_LYP'
 
     sec_system = archive.section_run[0].section_system[0]
     assert sec_system.atom_labels == ['C', 'O']
-    assert pytest.approx(sec_system.atom_positions[1][0].magnitude, 1.25e-10)
+    assert sec_system.atom_positions[1][0].magnitude == pytest.approx(1.25e-10)
 
     assert len(archive.section_run[0].section_single_configuration_calculation) == 1
     sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
     assert len(sec_scc.section_basis_set) == 3
     assert sec_scc.section_basis_set[1].x_orca_basis_set == '11s6p2d1f'
     assert sec_scc.section_basis_set[2].x_orca_nb_of_primitive_gaussian_functions == 92
-    assert pytest.approx(sec_scc.energy_total.magnitude, -4.94114851e-16)
-    assert pytest.approx(sec_scc.x_orca_potential_energy, -9.84253575e-16)
-    assert pytest.approx(sec_scc.x_orca_nb_elect_total, 14.000005402207)
+    assert sec_scc.energy_total.magnitude == pytest.approx(-4.94114851e-16)
+    assert sec_scc.x_orca_potential_energy == pytest.approx(-9.84253575e-16)
+    assert sec_scc.x_orca_nb_elect_total == pytest.approx(14.000005402207)
     assert len(sec_scc.section_scf_iteration) == 8
-    assert pytest.approx(sec_scc.section_scf_iteration[3].energy_total_scf_iteration.magnitude, -4.94114809e-16)
-    assert pytest.approx(sec_scc.section_scf_iteration[-1].x_orca_last_max_density_change, 9.441463170411847e-22)
+    assert sec_scc.section_scf_iteration[3].energy_total_scf_iteration.magnitude == pytest.approx(-4.94114809e-16)
+    assert sec_scc.section_scf_iteration[-1].x_orca_last_max_density_change == pytest.approx(9.441463170411847e-22)
     assert np.shape(sec_scc.section_eigenvalues[0].eigenvalues_values) == (1, 1, 62)
-    assert pytest.approx(sec_scc.section_eigenvalues[0].eigenvalues_values[0][0][28].magnitude, 6.53237991e-18)
+    assert sec_scc.section_eigenvalues[0].eigenvalues_values[0][0][28].magnitude == pytest.approx(6.53237991e-18)
     assert sec_scc.section_eigenvalues[0].eigenvalues_occupation[0][0][6] == 2.0
     assert len(sec_scc.section_dos) == 2
     assert sec_scc.section_dos[0].x_orca_mulliken_atom_charge == 0.131793
@@ -77,9 +77,9 @@ def test_geomopt(parser):
 
     assert sec_run.section_method[2].x_orca_nb_grid_pts_after_weights_screening == 34298
     assert sec_run.section_method[4].x_orca_integr_weight_cutoff == 1e-14
-    assert pytest.approx(sec_run.section_system[1].atom_positions[2][1].magnitude, 9.54068e-11)
+    assert sec_run.section_system[1].atom_positions[2][1].magnitude == pytest.approx(9.54068e-11)
     assert len(sec_run.section_single_configuration_calculation[0].section_scf_iteration) == 13
-    assert pytest.approx(sec_run.section_single_configuration_calculation[-1].x_orca_elec_energy, -6.34048432e-16)
+    assert sec_run.section_single_configuration_calculation[-1].x_orca_elec_energy == pytest.approx(-6.34048432e-16)
 
 
 def test_spinpol(parser):
@@ -89,7 +89,7 @@ def test_spinpol(parser):
     assert archive.section_run[0].section_method[0].x_orca_multiplicity == 2
     sec_eig = archive.section_run[0].section_single_configuration_calculation[0].section_eigenvalues[0]
     assert np.shape(sec_eig.eigenvalues_values) == (2, 1, 28)
-    assert pytest.approx(sec_eig.eigenvalues_values[1][0][22].magnitude, 7.57745431e-18)
+    assert sec_eig.eigenvalues_values[1][0][22].magnitude == pytest.approx(7.57745431e-18)
     assert sec_eig.eigenvalues_occupation[0][0][2] == 1.0
     sec_dos = archive.section_run[0].section_single_configuration_calculation[0].section_dos
     assert sec_dos[0].x_orca_mulliken_atom_charge == -0.01143
@@ -103,14 +103,14 @@ def test_ci(parser):
     sec_method = archive.section_run[0].section_method[1]
     assert sec_method.electronic_structure_method == 'CCSD'
     assert sec_method.x_orca_single_excitations_on_off == 'ON'
-    assert pytest.approx(sec_method.x_orca_t1_diagnostic, 6.77481921e-20)
+    assert sec_method.x_orca_t1_diagnostic == pytest.approx(6.77481921e-20)
 
     sec_system = archive.section_run[0].section_system[0]
     assert sec_system.atom_labels == ['Fe'] + ['O'] * 6 + ['Mg'] * 18 + ['Q'] * 704
-    assert pytest.approx(sec_system.atom_positions[39][1].magnitude, -4.211228e-10)
+    assert sec_system.atom_positions[39][1].magnitude == pytest.approx(-4.211228e-10)
 
     sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
-    assert pytest.approx(sec_scc.x_orca_ccsd_total_energy, -1.70953359e-14)
+    assert sec_scc.x_orca_ccsd_total_energy == pytest.approx(-1.70953359e-14)
 
 
 def test_tddft(parser):
