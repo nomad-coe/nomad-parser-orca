@@ -19,9 +19,9 @@
 
 import logging
 import numpy as np
-import pint
 
 from .metainfo import m_env
+from nomad.units import ureg
 from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
@@ -59,7 +59,7 @@ class OutParser(TextParser):
             val = [v.split() for v in val_in.strip().split('\n')]
             symbols = [v[0][:2] for v in val]
             coordinates = np.array([v[1:4] for v in val], dtype=float)
-            return symbols, pint.Quantity(coordinates, 'angstrom')
+            return symbols, coordinates * ureg.angstrom
 
         basis_set_quantities = [
             Quantity('basis_set_atom_labels', r'Type\s*(\w+)', repeats=True),
@@ -132,7 +132,7 @@ class OutParser(TextParser):
             Quantity(
                 name.lower().replace(' ', '_').replace('-', '_'),
                 rf'%s\s*\.+\s*({re_float})\s* Tolerance :\s*({re_float})' % name,
-                dtype=float, unit='hartree') for name in [
+                dtype=float, unit=ureg.hartree) for name in [
                     'Last Energy change', 'Last MAX-Density change', 'Last RMS-Density change']]
 
         population_quantities = [
@@ -201,13 +201,13 @@ class OutParser(TextParser):
                         rf'Number of Electrons\s*NEL\s*\.+\s*({re_float})', dtype=float),
                     Quantity(
                         'nuclear_repulsion',
-                        rf'Nuclear Repulsion\s*ENuc\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                        rf'Nuclear Repulsion\s*ENuc\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
                     Quantity(
                         'convergence_check_mode',
                         r'Convergence Check Mode ConvCheckMode\s*\.+\s*(\S+)', convert=False),
                     Quantity(
                         'energy_change_tolerance',
-                        rf'Energy Change\s*TolE\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                        rf'Energy Change\s*TolE\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
                     Quantity(
                         '1_elect_energy_change',
                         rf'1\-El\. energy change\s*\.+\s*({re_float})', dtype=float)])),
@@ -220,7 +220,7 @@ class OutParser(TextParser):
                 r'SCF ITERATIONS\s*\-+([\s\S]+?)\*{10}',
                 sub_parser=TextParser(quantities=[Quantity(
                     'energy',
-                    rf'\n *\d+\s*({re_float})', repeats=True, dtype=float, unit='hartree')])),
+                    rf'\n *\d+\s*({re_float})', repeats=True, dtype=float, unit=ureg.hartree)])),
             Quantity(
                 'final_grid',
                 r'Setting up the final grid:([\s\S]+?)\-{10}',
@@ -230,7 +230,7 @@ class OutParser(TextParser):
                 r'TOTAL SCF ENERGY\s*\-+([\s\S]+?)\-{10}', sub_parser=TextParser(quantities=[
                     Quantity(
                         name,
-                        rf'%s\s*:\s*({re_float})' % key, dtype=float, unit='hartree')
+                        rf'%s\s*:\s*({re_float})' % key, dtype=float, unit=ureg.hartree)
                     for key, name in self._energy_mapping.items()] + [
                         Quantity(
                             'virial_ratio',
@@ -261,7 +261,7 @@ class OutParser(TextParser):
                 'timings',
                 r'\n *TIMINGS\s*\-+\s*([\s\S]+?)\-{10}',
                 sub_parser=TextParser(quantities=[Quantity(
-                    name, rf'%s\s*\.+\s*({re_float})' % key, dtype=float, unit='s')
+                    name, rf'%s\s*\.+\s*({re_float})' % key, dtype=float, unit=ureg.s)
                     for key, name in self._timing_mapping.items()]))
         ]
 
@@ -287,10 +287,10 @@ class OutParser(TextParser):
                 r'Dimension of the aux\-basis\s*\.+\s*(\d+)', dtype=int),
             Quantity(
                 'energy_method_current',
-                rf'RI\-MP2 CORRELATION ENERGY:\s*({re_float})', dtype=float, unit='hartree'),
+                rf'RI\-MP2 CORRELATION ENERGY:\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'energy_total',
-                rf'MP2 TOTAL ENERGY:\s*({re_float})', dtype=float, unit='hartree')]
+                rf'MP2 TOTAL ENERGY:\s*({re_float})', dtype=float, unit=ureg.hartree)]
 
         def str_to_iteration_energy(val_in):
             val = [v.split() for v in val_in.strip().split('\n')]
@@ -371,25 +371,25 @@ class OutParser(TextParser):
                 r'Number of Beta\-MO pairs included\s*\.+\s*(\d+)', dtype=int),
             Quantity(
                 'mp2_energy_spin_aa',
-                rf'EMP2\(aa\)=\s*({re_float})', dtype=float, unit='hartree'),
+                rf'EMP2\(aa\)=\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'mp2_energy_spin_bb',
-                rf'EMP2\(bb\)=\s*({re_float})', dtype=float, unit='hartree'),
+                rf'EMP2\(bb\)=\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'mp2_energy_spin_ab',
-                rf'EMP2\(ab\)=\s*({re_float})', dtype=float, unit='hartree'),
+                rf'EMP2\(ab\)=\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'mp2_initial_guess',
-                rf'E\(0\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'E\(0\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'mp2_energy',
-                rf'E\(MP2\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'E\(MP2\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'mp2_total_energy',
-                rf'Initial E\(tot\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'Initial E\(tot\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'T_and_T_energy',
-                rf'<T\|T>\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'<T\|T>\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'total_nb_pairs_included',
                 r'Number of pairs included\s*\.+\s*(\d+)', dtype=int),
@@ -399,41 +399,41 @@ class OutParser(TextParser):
                 str_operation=str_to_iteration_energy, convert=False),
             Quantity(
                 'ccsd_correlation_energy',
-                rf'E\(CORR\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'E\(CORR\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsd_total_energy',
-                rf'E\(TOT\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'E\(TOT\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'single_norm_half_ss',
-                rf'Singles Norm <S\|S>\*\*1/2\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'Singles Norm <S\|S>\*\*1/2\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 't1_diagnostic',
-                rf'T1 diagnostic\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'T1 diagnostic\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsdt_total_triples_correction',
-                rf'Triples Correction \(T\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'Triples Correction \(T\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsdt_aaa_triples_contribution',
-                rf'alpha\-alpha\-alpha\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'alpha\-alpha\-alpha\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsdt_aab_triples_contribution',
-                rf'alpha\-alpha\-beta\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'alpha\-alpha\-beta\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             # typo in metainfo?
             Quantity(
                 'ccsdt_aba_triples_contribution',
-                rf'alpha\-beta\-beta\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'alpha\-beta\-beta\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsdt_bbb_triples_contribution',
-                rf'beta\-beta\-beta\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'beta\-beta\-beta\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsdt_final_corr_energy',
-                rf'Final correlation energy\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'Final correlation energy\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'ccsd_final_energy',
-                rf'E\(CCSD\)\s*\.+\s*({re_float})', dtype=float, unit='hartree'),
+                rf'E\(CCSD\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree),
             Quantity(
                 'energy_total',
-                rf'E\(CCSD\(T\)\)\s*\.+\s*({re_float})', dtype=float, unit='hartree')]
+                rf'E\(CCSD\(T\)\)\s*\.+\s*({re_float})', dtype=float, unit=ureg.hartree)]
 
         calculation_quantities = [
             Quantity(
@@ -767,8 +767,8 @@ class OrcaParser(FairdiParser):
             sec_eigenvalues.eigenvalues_occupation = np.reshape(
                 occupation, (len(occupation), 1, len(occupation[0])))
             values = orbital_energies[2].T
-            sec_eigenvalues.eigenvalues_values = pint.Quantity(
-                np.reshape(values, (len(values), 1, len(values[0]))), 'hartree')
+            sec_eigenvalues.eigenvalues_values = np.reshape(
+                values, (len(values), 1, len(values[0]))) * ureg.hartree
 
         # mulliken
         mulliken = self_consistent.get('mulliken')
@@ -794,8 +794,7 @@ class OrcaParser(FairdiParser):
         if spectrum is not None:
             sec_excited = sec_scc.m_create(ExcitedStates)
             spectrum = np.transpose(spectrum)
-            sec_excited.x_orca_excitation_energy = pint.Quantity(
-                spectrum[1], '1/cm').to('1/m').magnitude
+            sec_excited.x_orca_excitation_energy = (spectrum[1] / ureg.cm).to('1/m').magnitude
             sec_excited.x_orca_oscillator_strength = spectrum[3]
             sec_excited.x_orca_transition_dipole_moment_x = spectrum[5]
             sec_excited.x_orca_transition_dipole_moment_y = spectrum[6]
@@ -835,11 +834,11 @@ class OrcaParser(FairdiParser):
                     continue
                 if key.endswith('tol'):
                     if 'gradient' in key:
-                        val[1] = pint.Quantity(val[1], 'hartree/bohr').to('joule/meter').magnitude
+                        val[1] = (val[1] * ureg.hartree / ureg.bohr).to('joule/meter').magnitude
                     elif 'displacement' in key:
-                        val[1] = pint.Quantity(val[1], 'bohr').to('meter').magnitude
+                        val[1] = (val[1] * ureg.bohr).to('meter').magnitude
                     else:
-                        val[1] = pint.Quantity(val[1], 'hartree').to('joule').magnitude
+                        val[1] = (val[1] * ureg.hartree).to('joule').magnitude
                     setattr(sec_sampling_method, 'x_orca_%s_value' % key, val[1])
                     val = val[0]
                 elif key in ['update_method', 'coords_choice', 'initial_hessian']:
