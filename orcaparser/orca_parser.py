@@ -26,8 +26,8 @@ from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
-    BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, Eigenvalues, Dos,\
-    SamplingMethod, ExcitedStates
+    BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, Eigenvalues, Charges,\
+    ChargesValue, SamplingMethod, ExcitedStates
 
 
 class OutParser(TextParser):
@@ -776,18 +776,22 @@ class OrcaParser(FairdiParser):
             atomic_charges = mulliken.get('atomic_charges')
             orbital_charges = mulliken.get('orbital_charges')
 
-            for n, species in enumerate(atomic_charges.get('species')):
-                sec_dos = sec_scc.m_create(Dos)
-                sec_dos.x_orca_atom_species = species
-                sec_dos.x_orca_mulliken_atom_charge = atomic_charges.charge[n]
-                if orbital_charges is not None:
-                    # TODO make orbital take list
-                    sec_dos.x_orca_atom_orbital_mroc = ' '.join(
-                        [c[0] for c in orbital_charges.atom[n].charge])
-                    sec_dos.x_orca_mulliken_partial_orbital_charge_mroc = [
-                        c[1] for c in orbital_charges.atom[n].charge]
+            sec_charges = sec_scc.m_create(Charges)
+            sec_charges.charges_analysis_method = 'mulliken'
+            sec_charges.n_charges_atoms = len(atomic_charges.get('species', []))
+            for atom, label in enumerate(atomic_charges.get('species', [])):
+                sec_charges_value = sec_charges.m_create(ChargesValue, Charges.charges_total)
+                sec_charges_value.charges_atom_index = atom
+                sec_charges_value.charges_atom_label = label
+                sec_charges_value.charges_value = atomic_charges.charge[atom]
+                for orbital, orbital_charge in orbital_charges.atom[atom].get('charge', []):
+                    sec_charges_value = sec_charges.m_create(ChargesValue, Charges.charges_partial)
+                    sec_charges_value.charges_atom_index = atom
+                    sec_charges_value.charges_atom_label = orbital_charges.atom[atom].species
+                    sec_charges_value.charges_orbital = orbital
+                    sec_charges_value.charges_value = orbital_charge
 
-            sec_dos.x_orca_mulliken_total_charge = atomic_charges.total_charge
+            sec_scc.total_charge = atomic_charges.total_charge
 
         # excitations
         spectrum = section.get('tddft', {}).get('absorption_spectrum_electric')
