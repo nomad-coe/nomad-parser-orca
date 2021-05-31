@@ -26,8 +26,8 @@ from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
 from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
-    BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, Eigenvalues, Charges,\
-    ChargesValue, SamplingMethod, ExcitedStates
+    BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, BandEnergies,\
+    BandEnergiesValues, Charges, ChargesValue, SamplingMethod, ExcitedStates
 
 
 class OutParser(TextParser):
@@ -761,14 +761,19 @@ class OrcaParser(FairdiParser):
         # eigenvalues
         orbital_energies = self_consistent.get('orbital_energies')
         if orbital_energies is not None:
-            sec_eigenvalues = sec_scc.m_create(Eigenvalues)
+            sec_eigenvalues = sec_scc.m_create(BandEnergies)
             orbital_energies = np.transpose(orbital_energies[:2])
             occupation = orbital_energies[1].T
-            sec_eigenvalues.eigenvalues_occupation = np.reshape(
-                occupation, (len(occupation), 1, len(occupation[0])))
+            occupation = np.reshape(occupation, (len(occupation), 1, len(occupation[0])))
             values = orbital_energies[2].T
-            sec_eigenvalues.eigenvalues_values = np.reshape(
-                values, (len(values), 1, len(values[0]))) * ureg.hartree
+            values = np.reshape(values, (len(values), 1, len(values[0]))) * ureg.hartree
+            for spin in range(len(values)):
+                for kpt in range(len(values[spin])):
+                    sec_eigenvalues_values = sec_eigenvalues.m_create(BandEnergiesValues)
+                    sec_eigenvalues_values.band_energies_spin = spin
+                    sec_eigenvalues_values.band_energies_kpoints_index = kpt
+                    sec_eigenvalues_values.band_energies_values = values[spin][kpt]
+                    sec_eigenvalues_values.band_energies_occupations = occupation[spin][kpt]
 
         # mulliken
         mulliken = self_consistent.get('mulliken')

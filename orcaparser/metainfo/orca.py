@@ -1633,35 +1633,6 @@ class section_excited_states(common.section_excited_states):
         a_legacy=LegacyDefinition(name='x_orca_transition_dipole_moment_z'))
 
 
-class section_eigenvalues(public.section_eigenvalues):
-
-    m_def = Section(validate=False, extends_base_section=True, a_legacy=LegacyDefinition(name='section_eigenvalues'))
-
-    x_orca_orbital_energy = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        description='''
-        -
-        ''',
-        a_legacy=LegacyDefinition(name='x_orca_orbital_energy'))
-
-    x_orca_orbital_nb = Quantity(
-        type=np.dtype(np.int32),
-        shape=[],
-        description='''
-        -
-        ''',
-        a_legacy=LegacyDefinition(name='x_orca_orbital_nb'))
-
-    x_orca_orbital_occupation_nb = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        description='''
-        -
-        ''',
-        a_legacy=LegacyDefinition(name='x_orca_orbital_occupation_nb'))
-
-
 class section_run(public.section_run):
 
     m_def = Section(validate=False, extends_base_section=True, a_legacy=LegacyDefinition(name='section_run'))
