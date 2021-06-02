@@ -61,9 +61,9 @@ def test_scf(parser):
     assert len(sec_scc.section_scf_iteration) == 8
     assert sec_scc.section_scf_iteration[3].energy_total_scf_iteration.magnitude == approx(-4.94113458e-16)
     assert sec_scc.section_scf_iteration[-1].x_orca_last_max_density_change == approx(9.441463170411847e-22)
-    assert np.shape(sec_scc.eigenvalues[0].band_energies[0].band_energies_values) == (62,)
-    assert sec_scc.eigenvalues[0].band_energies[0].band_energies_values[28].magnitude == approx(6.53237991e-18)
-    assert sec_scc.eigenvalues[0].band_energies[0].band_energies_occupations[6] == 2.0
+    assert np.shape(sec_scc.eigenvalues[0].band_energies[0].value) == (62,)
+    assert sec_scc.eigenvalues[0].band_energies[0].value[28].magnitude == approx(6.53237991e-18)
+    assert sec_scc.eigenvalues[0].band_energies[0].occupations[6] == 2.0
     assert len(sec_scc.atom_charges[0].charges_total) == 2
     assert sec_scc.atom_charges[0].charges_total[0].charges_value.magnitude == 0.131793
     assert sec_scc.atom_charges[0].charges_partial[27].charges_value.magnitude == 0.027488
@@ -92,9 +92,9 @@ def test_spinpol(parser):
 
     assert archive.section_run[0].section_method[0].x_orca_multiplicity == 2
     sec_eig = archive.section_run[0].section_single_configuration_calculation[0].eigenvalues[0]
-    assert np.shape(sec_eig.band_energies[1].band_energies_values) == (28,)
-    assert sec_eig.band_energies[1].band_energies_values[22].magnitude == approx(7.57745431e-18)
-    assert sec_eig.band_energies[0].band_energies_occupations[2] == 1.0
+    assert np.shape(sec_eig.band_energies[1].value) == (28,)
+    assert sec_eig.band_energies[1].value[22].magnitude == approx(7.57745431e-18)
+    assert sec_eig.band_energies[0].occupations[2] == 1.0
     sec_charges = archive.section_run[0].section_single_configuration_calculation[0].atom_charges[0]
     assert sec_charges.charges_total[0].charges_value.magnitude == -0.01143
     assert sec_charges.charges_partial[14].charges_value.magnitude == 1.450488
