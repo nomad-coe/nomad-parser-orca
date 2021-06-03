@@ -27,7 +27,7 @@ from nomad.parsing.file_parser import TextParser, Quantity
 
 from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
     BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, BandEnergies,\
-    BandEnergiesValues, Charges, ChargesValue, SamplingMethod, ExcitedStates
+    BandEnergiesValues, Charges, ChargesValue, SamplingMethod, ExcitedStates, Energy
 
 
 class OutParser(TextParser):
@@ -38,11 +38,11 @@ class OutParser(TextParser):
         re_float = r'[\-\+\d\.Ee]+'
 
         self._energy_mapping = {
-            'Total Energy': 'energy_total', 'Nuclear Repulsion': 'nuc_repulsion',
+            'Total Energy': 'energy_total', 'Nuclear Repulsion': 'energy_nuclear_repulsion',
             'Electronic Energy': 'elec_energy', 'One Electron Energy': 'one_elec_energy',
             'Two Electron Energy': 'two_elec_energy', 'Potential Energy': 'potential_energy',
-            'Kinetic Energy': 'kinetc_energy', r'E\(X\)': 'exchange_energy',
-            r'E\(C\)': 'correlation_energy', r'E\(XC\)': 'exchange_correlation_energy'}
+            'Kinetic Energy': 'energy_kinetic_electronic', r'E\(X\)': 'energy_X',
+            r'E\(C\)': 'energy_C', r'E\(XC\)': 'energy_XC'}
 
         self._timing_mapping = {
             'Total time': 'final_time', 'Sum of individual times': 'sum_individual_times',
@@ -724,13 +724,18 @@ class OrcaParser(FairdiParser):
 
         scf_energy = self_consistent.get('total_scf_energy', None)
         if scf_energy is not None:
-            sec_scc.energy_total = scf_energy.get('energy_total')
+            sec_scc.m_add_sub_section(SingleConfigurationCalculation.energy_total, Energy(
+                value=scf_energy.get('energy_total')))
             energy_keys = list(self.out_parser._energy_mapping.values())
             for key, val in scf_energy.items():
                 if val is not None:
-                    if key in energy_keys:
-                        val = val.to('joule').magnitude
-                    setattr(sec_scc, 'x_orca_%s' % key, val)
+                    if key.startswith('energy_'):
+                        sec_scc.m_add_sub_section(getattr(
+                            SingleConfigurationCalculation, key), Energy(value=val))
+                    else:
+                        if key in energy_keys:
+                            val = val.to('joule').magnitude
+                        setattr(sec_scc, 'x_orca_%s' % key, val)
 
         scf_iterations = self_consistent.get('scf_iterations', None)
         if scf_iterations is not None:
@@ -782,21 +787,18 @@ class OrcaParser(FairdiParser):
             orbital_charges = mulliken.get('orbital_charges')
 
             sec_charges = sec_scc.m_create(Charges)
-            sec_charges.charges_analysis_method = 'mulliken'
+            sec_charges.analysis_method = 'mulliken'
             sec_charges.n_charges_atoms = len(atomic_charges.get('species', []))
-            for atom, label in enumerate(atomic_charges.get('species', [])):
-                sec_charges_value = sec_charges.m_create(ChargesValue, Charges.charges_total)
-                sec_charges_value.charges_atom_index = atom
-                sec_charges_value.charges_atom_label = label
-                sec_charges_value.charges_value = atomic_charges.charge[atom]
+            sec_charges.value = atomic_charges.charge
+            for atom in range(len(atomic_charges.get('species', []))):
                 for orbital, orbital_charge in orbital_charges.atom[atom].get('charge', []):
-                    sec_charges_value = sec_charges.m_create(ChargesValue, Charges.charges_partial)
-                    sec_charges_value.charges_atom_index = atom
-                    sec_charges_value.charges_atom_label = orbital_charges.atom[atom].species
-                    sec_charges_value.charges_orbital = orbital
-                    sec_charges_value.charges_value = orbital_charge
+                    sec_charges_value = sec_charges.m_create(ChargesValue, Charges.partial)
+                    sec_charges_value.atom_index = atom
+                    sec_charges_value.atom_label = orbital_charges.atom[atom].species
+                    sec_charges_value.orbital = orbital
+                    sec_charges_value.value = orbital_charge
 
-            sec_scc.total_charge = atomic_charges.total_charge
+            sec_charges.total = atomic_charges.total_charge
 
         # excitations
         spectrum = section.get('tddft', {}).get('absorption_spectrum_electric')

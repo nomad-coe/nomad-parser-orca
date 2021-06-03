@@ -55,7 +55,7 @@ def test_scf(parser):
     assert len(sec_scc.section_basis_set) == 3
     assert sec_scc.section_basis_set[1].x_orca_basis_set == '11s6p2d1f'
     assert sec_scc.section_basis_set[2].x_orca_nb_of_primitive_gaussian_functions == 92
-    assert sec_scc.energy_total.magnitude == approx(-4.94114851e-16)
+    assert sec_scc.energy_total.value.magnitude == approx(-4.94114851e-16)
     assert sec_scc.x_orca_potential_energy == approx(-9.84253575e-16)
     assert sec_scc.x_orca_nb_elect_total == approx(14.000005402207)
     assert len(sec_scc.section_scf_iteration) == 8
@@ -64,9 +64,9 @@ def test_scf(parser):
     assert np.shape(sec_scc.eigenvalues[0].band_energies[0].value) == (62,)
     assert sec_scc.eigenvalues[0].band_energies[0].value[28].magnitude == approx(6.53237991e-18)
     assert sec_scc.eigenvalues[0].band_energies[0].occupations[6] == 2.0
-    assert len(sec_scc.atom_charges[0].charges_total) == 2
-    assert sec_scc.atom_charges[0].charges_total[0].charges_value.magnitude == 0.131793
-    assert sec_scc.atom_charges[0].charges_partial[27].charges_value.magnitude == 0.027488
+    assert len(sec_scc.charges[0].value) == 2
+    assert sec_scc.charges[0].value[0].magnitude == 0.131793
+    assert sec_scc.charges[0].partial[27].value.magnitude == 0.027488
     assert sec_scc.x_orca_diis_solution == 0.003
 
 
@@ -95,9 +95,9 @@ def test_spinpol(parser):
     assert np.shape(sec_eig.band_energies[1].value) == (28,)
     assert sec_eig.band_energies[1].value[22].magnitude == approx(7.57745431e-18)
     assert sec_eig.band_energies[0].occupations[2] == 1.0
-    sec_charges = archive.section_run[0].section_single_configuration_calculation[0].atom_charges[0]
-    assert sec_charges.charges_total[0].charges_value.magnitude == -0.01143
-    assert sec_charges.charges_partial[14].charges_value.magnitude == 1.450488
+    sec_charges = archive.section_run[0].section_single_configuration_calculation[0].charges[0]
+    assert sec_charges.value[0].magnitude == -0.01143
+    assert sec_charges.partial[14].value.magnitude == 1.450488
 
 
 def test_ci(parser):
