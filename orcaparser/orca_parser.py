@@ -27,7 +27,7 @@ from nomad.parsing.file_parser import TextParser, Quantity
 
 from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
     BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, BandEnergies,\
-    BandEnergiesValues, Charges, ChargesValue, SamplingMethod, ExcitedStates, Energy
+    Charges, ChargesValue, SamplingMethod, ExcitedStates, Energy
 
 
 class OutParser(TextParser):
@@ -772,13 +772,8 @@ class OrcaParser(FairdiParser):
             occupation = np.reshape(occupation, (len(occupation), 1, len(occupation[0])))
             values = orbital_energies[2].T
             values = np.reshape(values, (len(values), 1, len(values[0]))) * ureg.hartree
-            for spin in range(len(values)):
-                for kpt in range(len(values[spin])):
-                    sec_eigenvalues_values = sec_eigenvalues.m_create(BandEnergiesValues)
-                    sec_eigenvalues_values.spin = spin
-                    sec_eigenvalues_values.kpoints_index = kpt
-                    sec_eigenvalues_values.value = values[spin][kpt]
-                    sec_eigenvalues_values.occupations = occupation[spin][kpt]
+            sec_eigenvalues.value = values
+            sec_eigenvalues.occupations = occupation
 
         # mulliken
         mulliken = self_consistent.get('mulliken')
