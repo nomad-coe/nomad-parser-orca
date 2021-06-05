@@ -58,15 +58,15 @@ def test_scf(parser):
     assert sec_scc.energy_total.value.magnitude == approx(-4.94114851e-16)
     assert sec_scc.x_orca_potential_energy == approx(-9.84253575e-16)
     assert sec_scc.x_orca_nb_elect_total == approx(14.000005402207)
-    assert len(sec_scc.section_scf_iteration) == 8
-    assert sec_scc.section_scf_iteration[3].energy_total_scf_iteration.magnitude == approx(-4.94113458e-16)
-    assert sec_scc.section_scf_iteration[-1].x_orca_last_max_density_change == approx(9.441463170411847e-22)
+    assert len(sec_scc.scf_iteration) == 8
+    assert sec_scc.scf_iteration[3].energy_total.value.magnitude == approx(-4.94113458e-16)
+    assert sec_scc.scf_iteration[-1].x_orca_last_max_density_change == approx(9.441463170411847e-22)
     assert np.shape(sec_scc.eigenvalues[0].value[0][0]) == (62,)
     assert sec_scc.eigenvalues[0].value[0][0][28].magnitude == approx(6.53237991e-18)
     assert sec_scc.eigenvalues[0].occupations[0][0][6] == 2.0
     assert len(sec_scc.charges[0].value) == 2
     assert sec_scc.charges[0].value[0].magnitude == 0.131793
-    assert sec_scc.charges[0].partial[27].value.magnitude == 0.027488
+    assert sec_scc.charges[0].orbital_projected[27].value.magnitude == 0.027488
     assert sec_scc.x_orca_diis_solution == 0.003
 
 
@@ -82,7 +82,7 @@ def test_geomopt(parser):
     assert sec_run.section_method[2].x_orca_nb_grid_pts_after_weights_screening == 34298
     assert sec_run.section_method[4].x_orca_integr_weight_cutoff == 1e-14
     assert sec_run.section_system[1].atom_positions[2][1].magnitude == approx(9.54068e-11)
-    assert len(sec_run.section_single_configuration_calculation[0].section_scf_iteration) == 13
+    assert len(sec_run.section_single_configuration_calculation[0].scf_iteration) == 13
     assert sec_run.section_single_configuration_calculation[-1].x_orca_elec_energy == approx(-6.34048432e-16)
 
 
@@ -97,7 +97,7 @@ def test_spinpol(parser):
     assert sec_eig.occupations[0][0][2] == 1.0
     sec_charges = archive.section_run[0].section_single_configuration_calculation[0].charges[0]
     assert sec_charges.value[0].magnitude == -0.01143
-    assert sec_charges.partial[14].value.magnitude == 1.450488
+    assert sec_charges.orbital_projected[14].value.magnitude == 1.450488
 
 
 def test_ci(parser):

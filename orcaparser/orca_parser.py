@@ -741,7 +741,7 @@ class OrcaParser(FairdiParser):
         if scf_iterations is not None:
             for energy in scf_iterations.get('energy', []):
                 sec_scf_iteration = sec_scc.m_create(ScfIteration)
-                sec_scf_iteration.energy_total_scf_iteration = energy
+                sec_scf_iteration.energy_total = Energy(value=energy)
 
             # why are tolerances in scf iteration
             scf_convergence = self_consistent.get('scf_convergence', {})
@@ -787,7 +787,7 @@ class OrcaParser(FairdiParser):
             sec_charges.value = atomic_charges.charge
             for atom in range(len(atomic_charges.get('species', []))):
                 for orbital, orbital_charge in orbital_charges.atom[atom].get('charge', []):
-                    sec_charges_value = sec_charges.m_create(ChargesValue, Charges.partial)
+                    sec_charges_value = sec_charges.m_create(ChargesValue, Charges.orbital_projected)
                     sec_charges_value.atom_index = atom
                     sec_charges_value.atom_label = orbital_charges.atom[atom].species
                     sec_charges_value.orbital = orbital
