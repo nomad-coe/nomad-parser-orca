@@ -800,11 +800,10 @@ class OrcaParser(FairdiParser):
         if spectrum is not None:
             sec_excited = sec_scc.m_create(ExcitedStates)
             spectrum = np.transpose(spectrum)
-            sec_excited.x_orca_excitation_energy = (spectrum[1] / ureg.cm).to('1/m').magnitude
-            sec_excited.x_orca_oscillator_strength = spectrum[3]
-            sec_excited.x_orca_transition_dipole_moment_x = spectrum[5]
-            sec_excited.x_orca_transition_dipole_moment_y = spectrum[6]
-            sec_excited.x_orca_transition_dipole_moment_z = spectrum[7]
+            sec_excited.excitation_energies = (spectrum[1] * ureg.c * ureg.h / ureg.cm)
+            sec_excited.oscillator_strengths = spectrum[3]
+            sec_excited.transition_dipole_moments = np.transpose(
+                spectrum[5:7]) * ureg.elementary_charge * ureg.bohr
 
         # timings
         timings = self_consistent.get('timings', {})

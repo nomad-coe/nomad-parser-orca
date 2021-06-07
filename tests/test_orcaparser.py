@@ -123,5 +123,5 @@ def test_tddft(parser):
 
     assert archive.section_run[0].section_method[1].electronic_structure_method == 'TDDFT'
     sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
-    assert sec_scc.section_excited_states[0].x_orca_excitation_energy[8] == 3956596900.0
-    assert sec_scc.section_excited_states[0].x_orca_transition_dipole_moment_y[21] == -0.00035
+    assert sec_scc.excited_states[0].excitation_energies[8].magnitude == approx(7.85956552e-16)
+    assert sec_scc.excited_states[0].transition_dipole_moments[21][1].magnitude == approx(-2.96742377e-33)
