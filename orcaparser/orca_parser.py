@@ -20,14 +20,22 @@
 import logging
 import numpy as np
 
-from .metainfo import m_env
 from nomad.units import ureg
 from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
-from nomad.datamodel.metainfo.common_dft import Run, Method, SingleConfigurationCalculation,\
-    BasisSet, System, XCFunctionals, MethodToMethodRefs, ScfIteration, BandEnergies,\
-    Charges, ChargesValue, SamplingMethod, ExcitedStates, Energy
+from nomad.datamodel.metainfo.run.run import Run, Program
+from nomad.datamodel.metainfo.run.method import (
+    Electronic, Method, BasisSet, DFT, MethodReference, XCFunctional, Functional
+)
+from nomad.datamodel.metainfo.run.system import (
+    System, Atoms, SystemReference
+)
+from nomad.datamodel.metainfo.run.calculation import (
+    Calculation, Energy, EnergyEntry, ScfIteration, BandEnergies, Charges, ChargesValue,
+    ExcitedStates
+)
+from nomad.datamodel.metainfo.workflow import Workflow, GeometryOptimization
 
 
 class OutParser(TextParser):
@@ -41,8 +49,8 @@ class OutParser(TextParser):
             'Total Energy': 'energy_total', 'Nuclear Repulsion': 'energy_nuclear_repulsion',
             'Electronic Energy': 'elec_energy', 'One Electron Energy': 'one_elec_energy',
             'Two Electron Energy': 'two_elec_energy', 'Potential Energy': 'potential_energy',
-            'Kinetic Energy': 'energy_kinetic_electronic', r'E\(X\)': 'energy_X',
-            r'E\(C\)': 'energy_C', r'E\(XC\)': 'energy_XC'}
+            'Kinetic Energy': 'energy_kinetic_electronic', r'E\(X\)': 'energy_exchange',
+            r'E\(C\)': 'energy_correlation', r'E\(XC\)': 'energy_XC'}
 
         self._timing_mapping = {
             'Total time': 'final_time', 'Sum of individual times': 'sum_individual_times',
@@ -531,7 +539,6 @@ class OrcaParser(FairdiParser):
                 r'\s*'
                 r'\s*--- An Ab Initio, DFT and Semiempirical electronic structure package ---\s*'))
 
-        self._metainfo_env = m_env
         self.out_parser = OutParser()
 
         # TODO list adapted from old parser, is incomplete and entries may be incorrect
@@ -597,10 +604,39 @@ class OrcaParser(FairdiParser):
             'PWLDA': 'LDA', 'P86': 'GGA', 'LYP': 'GGA'}
 
     def parse_method(self, section):
-        sec_method = self.archive.section_run[-1].m_create(Method)
+        sec_method = self.archive.run[-1].m_create(Method)
 
+        # TODO fix metainfo so variables take lists
+        for kind in ['basis_set', 'auxiliary_basis_set']:
+            basis_set = section.get(kind)
+            if basis_set is None:
+                continue
+            for n in range(len(basis_set.get('basis_set', []))):
+                sec_basis_set = sec_method.m_create(BasisSet)
+                sec_basis_set.kind = 'Gaussians'
+                for key in ['basis_set', 'basis_set_atom_labels', 'basis_set_contracted']:
+                    val = basis_set.get(key)
+                    if val is None:
+                        continue
+                    prefix = '' if key == 'basis_set_atom_labels' else kind.split('basis_set')[0]
+                    metainfo_name = 'x_orca_%s%s' % (prefix, key)
+                    setattr(sec_basis_set, metainfo_name, val[n])
+
+        # gaussian basis sets
+        basis_set = section.get('basis_set_statistics')
+        if basis_set is not None:
+            sec_basis_set = sec_method.m_create(BasisSet)
+            for key, val in basis_set.items():
+                if val is None:
+                    continue
+                for n in range(len(val)):
+                    ext = '' if n == 0 else '_aux'
+                    setattr(sec_basis_set, 'x_orca_%s%s' % (key, ext), val[n])
+
+        sec_dft = sec_method.m_create(DFT)
+        sec_electronic = sec_method.m_create(Electronic)
         # TODO identify DFT+U
-        sec_method.electronic_structure_method = 'DFT'
+        sec_electronic.method = 'DFT'
 
         scf_settings = section.get('self_consistent', {}).get('scf_settings', {})
         for key, val in scf_settings.items():
@@ -653,9 +689,16 @@ class OrcaParser(FairdiParser):
                 if len(xc_functionals) == 0:
                     self.logger.error('Cannot resolve xc functional', data=dict(name=xc_functional))
 
+        sec_xc_functional = sec_dft.m_create(XCFunctional)
         for functional in xc_functionals:
-            sec_xc_functionals = sec_method.m_create(XCFunctionals)
-            sec_xc_functionals.XC_functional_name = functional
+            if '_X_' in functional or functional.endswith('_X'):
+                sec_xc_functional.exchange.append(Functional(name=functional))
+            elif '_C_' in functional or functional.endswith('_C'):
+                sec_xc_functional.correlation.append(Functional(name=functional))
+            elif 'HYB' in functional:
+                sec_xc_functional.hybrid.append(Functional(name=functional))
+            else:
+                sec_xc_functional.contributions.append(Functional(name=functional))
 
         for calculation_type in ['tddft', 'mp2', 'ci']:
             calculation = section.get(calculation_type)
@@ -663,8 +706,8 @@ class OrcaParser(FairdiParser):
                 continue
             method = calculation.get('electronic_structure_method')
             method = calculation_type.upper() if method is None else method
-            sec_method = self.archive.section_run[-1].m_create(Method)
-            sec_method.electronic_structure_method = method
+            sec_method = self.archive.run[-1].m_create(Method)
+            sec_method.electronic = Electronic(method=method)
 
             for key, val in calculation.items():
                 if val is not None:
@@ -673,65 +716,38 @@ class OrcaParser(FairdiParser):
                             val = val.to('joule').magnitude
                     setattr(sec_method, 'x_orca_%s' % key, val)
 
-            sec_method_ref = sec_method.m_create(MethodToMethodRefs)
-            sec_method_ref.method_to_method_kind = 'starting_point'
-            sec_method.method_to_method_ref = self.archive.section_run[-1].section_method[0]
+            sec_method.method_ref.append(MethodReference(
+                kind='starting_point', value=self.archive.run[-1].method[0]))
 
         return sec_method
 
     def parse_system(self, section):
-        sec_system = self.archive.section_run[-1].m_create(System)
+        sec_system = self.archive.run[-1].m_create(System)
+        sec_atoms = sec_system.m_create(Atoms)
         if section.get('cartesian_coordinates') is not None:
             symbols, coordinates = section.get('cartesian_coordinates')
-            sec_system.atom_labels = symbols
-            sec_system.atom_positions = coordinates
-        sec_system.configuration_periodic_dimensions = [False] * 3
+            sec_atoms.labels = symbols
+            sec_atoms.positions = coordinates
+        sec_atoms.periodic = [False] * 3
         return sec_system
 
     def parse_scc(self, section):
-        sec_scc = self.archive.section_run[-1].m_create(SingleConfigurationCalculation)
-
-        # TODO fix metainfo so variables take lists
-        # basis sets, why are they in scc
-        for kind in ['basis_set', 'auxiliary_basis_set']:
-            basis_set = section.get(kind)
-            if basis_set is None:
-                continue
-            for n in range(len(basis_set.get('basis_set', []))):
-                sec_basis_set = sec_scc.m_create(BasisSet)
-                for key in ['basis_set', 'basis_set_atom_labels', 'basis_set_contracted']:
-                    val = basis_set.get(key)
-                    if val is None:
-                        continue
-                    prefix = '' if key == 'basis_set_atom_labels' else kind.split('basis_set')[0]
-                    metainfo_name = 'x_orca_%s%s' % (prefix, key)
-                    setattr(sec_basis_set, metainfo_name, val[n])
-
-        # gaussian basis sets
-        basis_set = section.get('basis_set_statistics')
-        if basis_set is not None:
-            sec_basis_set = sec_scc.m_create(BasisSet)
-            for key, val in basis_set.items():
-                if val is None:
-                    continue
-                for n in range(len(val)):
-                    ext = '' if n == 0 else '_aux'
-                    setattr(sec_basis_set, 'x_orca_%s%s' % (key, ext), val[n])
+        sec_scc = self.archive.run[-1].m_create(Calculation)
 
         self_consistent = section.get('self_consistent')
         if self_consistent is None:
             return sec_scc
 
+        sec_energy = sec_scc.m_create(Energy)
         scf_energy = self_consistent.get('total_scf_energy', None)
         if scf_energy is not None:
-            sec_scc.m_add_sub_section(SingleConfigurationCalculation.energy_total, Energy(
-                value=scf_energy.get('energy_total')))
+            sec_energy.total = EnergyEntry(value=scf_energy.get('energy_total'))
             energy_keys = list(self.out_parser._energy_mapping.values())
             for key, val in scf_energy.items():
                 if val is not None:
                     if key.startswith('energy_'):
-                        sec_scc.m_add_sub_section(getattr(
-                            SingleConfigurationCalculation, key), Energy(value=val))
+                        sec_energy.m_add_sub_section(getattr(
+                            Energy, key.replace('energy_', '').lower()), EnergyEntry(value=val))
                     else:
                         if key in energy_keys:
                             val = val.to('joule').magnitude
@@ -741,7 +757,7 @@ class OrcaParser(FairdiParser):
         if scf_iterations is not None:
             for energy in scf_iterations.get('energy', []):
                 sec_scf_iteration = sec_scc.m_create(ScfIteration)
-                sec_scf_iteration.energy_total = Energy(value=energy)
+                sec_scf_iteration.energy = Energy(total=EnergyEntry(value=energy))
 
             # why are tolerances in scf iteration
             scf_convergence = self_consistent.get('scf_convergence', {})
@@ -820,10 +836,12 @@ class OrcaParser(FairdiParser):
             sec_method = self.parse_method(section)
             sec_system = self.parse_system(section)
             sec_scc = self.parse_scc(section)
-            sec_scc.single_configuration_to_calculation_method_ref = sec_method
-            sec_scc.single_configuration_calculation_to_system_ref = sec_system
+            sec_scc.method_ref.append(MethodReference(value=sec_method))
+            sec_scc.system_ref.append(SystemReference(value=sec_system))
 
         parse_configuration(self.out_parser.get('single_point'))
+
+        sec_workflow = self.archive.m_create(Workflow)
 
         geometry_optimization = self.out_parser.get('geometry_optimization')
         if geometry_optimization is not None:
@@ -832,8 +850,8 @@ class OrcaParser(FairdiParser):
 
             parse_configuration(geometry_optimization.get('final_energy_evaluation'))
 
-            sec_sampling_method = self.archive.section_run[-1].m_create(SamplingMethod)
-            sec_sampling_method.sampling_method = 'geometry_optimization'
+            sec_workflow.type = 'geometry_optimization'
+            sec_geometry_opt = sec_workflow.m_create(GeometryOptimization)
             for key, val in geometry_optimization.items():
                 if key in ['cycle', 'final_energy_evaluation'] or val is None:
                     continue
@@ -844,12 +862,12 @@ class OrcaParser(FairdiParser):
                         val[1] = (val[1] * ureg.bohr).to('meter').magnitude
                     else:
                         val[1] = (val[1] * ureg.hartree).to('joule').magnitude
-                    setattr(sec_sampling_method, 'x_orca_%s_value' % key, val[1])
+                    setattr(sec_geometry_opt, 'x_orca_%s_value' % key, val[1])
                     val = val[0]
                 elif key in ['update_method', 'coords_choice', 'initial_hessian']:
-                    setattr(sec_sampling_method, 'x_orca_%s_name' % key, ' '.join(val[1:]))
+                    setattr(sec_geometry_opt, 'x_orca_%s_name' % key, ' '.join(val[1:]))
                     val = val[0]
-                setattr(sec_sampling_method, 'x_orca_%s' % key, val)
+                setattr(sec_geometry_opt, 'x_orca_%s' % key, val)
 
     def init_parser(self, filepath, logger):
         self.out_parser.mainfile = filepath
@@ -862,14 +880,14 @@ class OrcaParser(FairdiParser):
         self.init_parser(filepath, logger)
 
         sec_run = self.archive.m_create(Run)
-        sec_run.program_name = 'ORCA'
-        sec_run.program_basis_set_type = 'Gaussians'
+        sec_run.program = Program(name='ORCA')
         version = []
         for key in ['program_version', 'program_svn', 'program_compilation_date']:
             val = self.out_parser.get(key)
             if val is not None:
                 setattr(sec_run, 'x_orca_%s' % key, val)
                 version.append(val)
-        sec_run.program_version = ' '.join(version)
+        sec_run.program.version = ' '.join(version)
+        sec_run.program.compilation_date = self.out_parser.get('program_compilation_date')
 
         self.parse_configurations()

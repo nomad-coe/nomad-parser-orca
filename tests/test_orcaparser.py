@@ -36,34 +36,34 @@ def test_scf(parser):
     archive = EntryArchive()
     parser.parse('tests/data/CO_scf/orca3.2985087.out', archive, None)
 
-    assert archive.section_run[0].program_version == '3.0.3 - RELEASE   -'
+    assert archive.run[0].program.version == '3.0.3 - RELEASE   -'
 
-    sec_method = archive.section_run[0].section_method[0]
-    assert sec_method.electronic_structure_method == 'DFT'
+    sec_method = archive.run[0].method[0]
+    assert sec_method.electronic.method == 'DFT'
     assert sec_method.x_orca_nelectrons == 14.0
     assert sec_method.x_orca_energy_change_tolerance == approx(4.35974472e-24)
     assert sec_method.x_orca_radial_grid_type == 'Gauss-Chebyshev'
-    assert len(sec_method.section_XC_functionals) == 4
-    assert sec_method.section_XC_functionals[2].XC_functional_name == 'GGA_C_LYP'
+    assert len(sec_method.dft.xc_functional.exchange) == 2
+    assert sec_method.dft.xc_functional.correlation[0].name == 'GGA_C_LYP'
+    assert len(sec_method.basis_set) == 3
+    assert sec_method.basis_set[1].x_orca_basis_set == '11s6p2d1f'
+    assert sec_method.basis_set[2].x_orca_nb_of_primitive_gaussian_functions == 92
 
-    sec_system = archive.section_run[0].section_system[0]
-    assert sec_system.atom_labels == ['C', 'O']
-    assert sec_system.atom_positions[1][0].magnitude == approx(1.25e-10)
+    sec_system = archive.run[0].system[0]
+    assert sec_system.atoms.labels == ['C', 'O']
+    assert sec_system.atoms.positions[1][0].magnitude == approx(1.25e-10)
 
-    assert len(archive.section_run[0].section_single_configuration_calculation) == 1
-    sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
-    assert len(sec_scc.section_basis_set) == 3
-    assert sec_scc.section_basis_set[1].x_orca_basis_set == '11s6p2d1f'
-    assert sec_scc.section_basis_set[2].x_orca_nb_of_primitive_gaussian_functions == 92
-    assert sec_scc.energy_total.value.magnitude == approx(-4.94114851e-16)
+    assert len(archive.run[0].calculation) == 1
+    sec_scc = archive.run[0].calculation[0]
+    assert sec_scc.energy.total.value.magnitude == approx(-4.94114851e-16)
     assert sec_scc.x_orca_potential_energy == approx(-9.84253575e-16)
     assert sec_scc.x_orca_nb_elect_total == approx(14.000005402207)
     assert len(sec_scc.scf_iteration) == 8
-    assert sec_scc.scf_iteration[3].energy_total.value.magnitude == approx(-4.94113458e-16)
+    assert sec_scc.scf_iteration[3].energy.total.value.magnitude == approx(-4.94113458e-16)
     assert sec_scc.scf_iteration[-1].x_orca_last_max_density_change == approx(9.441463170411847e-22)
-    assert np.shape(sec_scc.eigenvalues[0].value[0][0]) == (62,)
-    assert sec_scc.eigenvalues[0].value[0][0][28].magnitude == approx(6.53237991e-18)
-    assert sec_scc.eigenvalues[0].occupations[0][0][6] == 2.0
+    assert np.shape(sec_scc.eigenvalues.value[0][0]) == (62,)
+    assert sec_scc.eigenvalues.value[0][0][28].magnitude == approx(6.53237991e-18)
+    assert sec_scc.eigenvalues.occupations[0][0][6] == 2.0
     assert len(sec_scc.charges[0].value) == 2
     assert sec_scc.charges[0].value[0].magnitude == 0.131793
     assert sec_scc.charges[0].orbital_projected[27].value.magnitude == 0.027488
@@ -74,28 +74,28 @@ def test_geomopt(parser):
     archive = EntryArchive()
     parser.parse('tests/data/CHO_geomopt/orca3.2985006.out', archive, None)
 
-    sec_run = archive.section_run[0]
-    assert len(sec_run.section_method) == 6
-    assert len(sec_run.section_system) == 6
-    assert len(sec_run.section_single_configuration_calculation) == 6
+    sec_run = archive.run[0]
+    assert len(sec_run.method) == 6
+    assert len(sec_run.system) == 6
+    assert len(sec_run.calculation) == 6
 
-    assert sec_run.section_method[2].x_orca_nb_grid_pts_after_weights_screening == 34298
-    assert sec_run.section_method[4].x_orca_integr_weight_cutoff == 1e-14
-    assert sec_run.section_system[1].atom_positions[2][1].magnitude == approx(9.54068e-11)
-    assert len(sec_run.section_single_configuration_calculation[0].scf_iteration) == 13
-    assert sec_run.section_single_configuration_calculation[-1].x_orca_elec_energy == approx(-6.34048432e-16)
+    assert sec_run.method[2].x_orca_nb_grid_pts_after_weights_screening == 34298
+    assert sec_run.method[4].x_orca_integr_weight_cutoff == 1e-14
+    assert sec_run.system[1].atoms.positions[2][1].magnitude == approx(9.54068e-11)
+    assert len(sec_run.calculation[0].scf_iteration) == 13
+    assert sec_run.calculation[-1].x_orca_elec_energy == approx(-6.34048432e-16)
 
 
 def test_spinpol(parser):
     archive = EntryArchive()
     parser.parse('tests/data/BO_spinpol/orca3.2984863.out', archive, None)
 
-    assert archive.section_run[0].section_method[0].x_orca_multiplicity == 2
-    sec_eig = archive.section_run[0].section_single_configuration_calculation[0].eigenvalues[0]
+    assert archive.run[0].method[0].x_orca_multiplicity == 2
+    sec_eig = archive.run[0].calculation[0].eigenvalues
     assert np.shape(sec_eig.value[1][0]) == (28,)
     assert sec_eig.value[1][0][22].magnitude == approx(7.57745431e-18)
     assert sec_eig.occupations[0][0][2] == 1.0
-    sec_charges = archive.section_run[0].section_single_configuration_calculation[0].charges[0]
+    sec_charges = archive.run[0].calculation[0].charges[0]
     assert sec_charges.value[0].magnitude == -0.01143
     assert sec_charges.orbital_projected[14].value.magnitude == 1.450488
 
@@ -104,16 +104,16 @@ def test_ci(parser):
     archive = EntryArchive()
     parser.parse('tests/data/FeMgO_ci/orca3.2713636.out', archive, None)
 
-    sec_method = archive.section_run[0].section_method[1]
-    assert sec_method.electronic_structure_method == 'CCSD'
+    sec_method = archive.run[0].method[1]
+    assert sec_method.electronic.method == 'CCSD'
     assert sec_method.x_orca_single_excitations_on_off == 'ON'
     assert sec_method.x_orca_t1_diagnostic == approx(6.77481921e-20)
 
-    sec_system = archive.section_run[0].section_system[0]
-    assert sec_system.atom_labels == ['Fe'] + ['O'] * 6 + ['Mg'] * 18 + ['Q'] * 704
-    assert sec_system.atom_positions[39][1].magnitude == approx(-4.211228e-10)
+    sec_system = archive.run[0].system[0]
+    assert sec_system.atoms.labels == ['Fe'] + ['O'] * 6 + ['Mg'] * 18 + ['Q'] * 704
+    assert sec_system.atoms.positions[39][1].magnitude == approx(-4.211228e-10)
 
-    sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
+    sec_scc = archive.run[0].calculation[0]
     assert sec_scc.x_orca_ccsd_total_energy == approx(-1.70953359e-14)
 
 
@@ -121,7 +121,7 @@ def test_tddft(parser):
     archive = EntryArchive()
     parser.parse('tests/data/ClTi_tddft/orca3.2706823.out', archive, None)
 
-    assert archive.section_run[0].section_method[1].electronic_structure_method == 'TDDFT'
-    sec_scc = archive.section_run[0].section_single_configuration_calculation[0]
-    assert sec_scc.excited_states[0].excitation_energies[8].magnitude == approx(7.85956552e-16)
-    assert sec_scc.excited_states[0].transition_dipole_moments[21][1].magnitude == approx(-2.96742377e-33)
+    assert archive.run[0].method[1].electronic.method == 'TDDFT'
+    sec_scc = archive.run[0].calculation[0]
+    assert sec_scc.excited_states.excitation_energies[8].magnitude == approx(7.85956552e-16)
+    assert sec_scc.excited_states.transition_dipole_moments[21][1].magnitude == approx(-2.96742377e-33)
