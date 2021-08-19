@@ -788,7 +788,7 @@ class OrcaParser(FairdiParser):
             occupation = np.reshape(occupation, (len(occupation), 1, len(occupation[0])))
             values = orbital_energies[2].T
             values = np.reshape(values, (len(values), 1, len(values[0]))) * ureg.hartree
-            sec_eigenvalues.value = values
+            sec_eigenvalues.energies = values
             sec_eigenvalues.occupations = occupation
 
         # mulliken
