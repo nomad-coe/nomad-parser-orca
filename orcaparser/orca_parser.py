@@ -613,7 +613,7 @@ class OrcaParser(FairdiParser):
                 continue
             for n in range(len(basis_set.get('basis_set', []))):
                 sec_basis_set = sec_method.m_create(BasisSet)
-                sec_basis_set.kind = 'Gaussians'
+                sec_basis_set.type = 'gaussians'
                 for key in ['basis_set', 'basis_set_atom_labels', 'basis_set_contracted']:
                     val = basis_set.get(key)
                     if val is None:
