@@ -22,7 +22,7 @@ from nomad.metainfo import (  # pylint: disable=unused-import
     MSection, MCategory, Category, Package, Quantity, Section, SubSection, SectionProxy,
     Reference
 )
-from nomad.datamodel.metainfo import run
+from nomad.datamodel.metainfo import simulation
 from nomad.datamodel.metainfo import workflow
 
 
@@ -115,7 +115,7 @@ class x_orca_section_functionals(MSection):
     m_def = Section(validate=False)
 
 
-class Method(run.method.Method):
+class Method(simulation.method.Method):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -579,7 +579,7 @@ class Method(run.method.Method):
         repeats=True)
 
 
-class ScfIteration(run.calculation.ScfIteration):
+class ScfIteration(simulation.calculation.ScfIteration):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -724,7 +724,7 @@ class ScfIteration(run.calculation.ScfIteration):
         ''')
 
 
-class System(run.system.System):
+class System(simulation.system.System):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -733,7 +733,7 @@ class System(run.system.System):
         repeats=True)
 
 
-class BasisSet(run.method.BasisSet):
+class BasisSet(simulation.method.BasisSet):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -871,7 +871,7 @@ class BasisSet(run.method.BasisSet):
         ''')
 
 
-class Calculation(run.calculation.Calculation):
+class Calculation(simulation.calculation.Calculation):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -1396,7 +1396,7 @@ class GeometryOptimization(workflow.GeometryOptimization):
         repeats=True)
 
 
-class ExcitedStates(run.calculation.ExcitedStates):
+class ExcitedStates(simulation.calculation.ExcitedStates):
 
     m_def = Section(validate=False, extends_base_section=True)
 
@@ -1436,7 +1436,7 @@ class ExcitedStates(run.calculation.ExcitedStates):
         ''')
 
 
-class Run(run.run.Run):
+class Run(simulation.run.Run):
 
     m_def = Section(validate=False, extends_base_section=True)
 

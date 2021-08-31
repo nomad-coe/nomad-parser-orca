@@ -24,14 +24,14 @@ from nomad.units import ureg
 from nomad.parsing import FairdiParser
 from nomad.parsing.file_parser import TextParser, Quantity
 
-from nomad.datamodel.metainfo.run.run import Run, Program
-from nomad.datamodel.metainfo.run.method import (
-    Electronic, Method, BasisSet, DFT, MethodReference, XCFunctional, Functional
+from nomad.datamodel.metainfo.simulation.run import Run, Program
+from nomad.datamodel.metainfo.simulation.method import (
+    Electronic, Method, BasisSet, DFT, XCFunctional, Functional
 )
-from nomad.datamodel.metainfo.run.system import (
-    System, Atoms, SystemReference
+from nomad.datamodel.metainfo.simulation.system import (
+    System, Atoms
 )
-from nomad.datamodel.metainfo.run.calculation import (
+from nomad.datamodel.metainfo.simulation.calculation import (
     Calculation, Energy, EnergyEntry, ScfIteration, BandEnergies, Charges, ChargesValue,
     ExcitedStates
 )
@@ -716,8 +716,8 @@ class OrcaParser(FairdiParser):
                             val = val.to('joule').magnitude
                     setattr(sec_method, 'x_orca_%s' % key, val)
 
-            sec_method.method_ref.append(MethodReference(
-                kind='starting_point', value=self.archive.run[-1].method[0]))
+            sec_method.starting_method_ref = self.archive.run[-1].method[0]
+            sec_method.methods_ref = [self.archive.run[-1].method[0]]
 
         return sec_method
 
@@ -836,8 +836,8 @@ class OrcaParser(FairdiParser):
             sec_method = self.parse_method(section)
             sec_system = self.parse_system(section)
             sec_scc = self.parse_scc(section)
-            sec_scc.method_ref.append(MethodReference(value=sec_method))
-            sec_scc.system_ref.append(SystemReference(value=sec_system))
+            sec_scc.method_ref = sec_method
+            sec_scc.system_ref = sec_system
 
         parse_configuration(self.out_parser.get('single_point'))
 
