@@ -43,7 +43,7 @@ class OutParser(TextParser):
         super().__init__()
 
     def init_quantities(self):
-        re_float = r'[\-\+\d\.Ee]+'
+        re_float = r'[-+]?\d+\.?\d*(?:[Ee][-+]\d+)?'
 
         self._energy_mapping = {
             'Total Energy': 'energy_total', 'Nuclear Repulsion': 'energy_nuclear_repulsion',
@@ -228,7 +228,7 @@ class OutParser(TextParser):
                 r'SCF ITERATIONS\s*\-+([\s\S]+?)\*{10}',
                 sub_parser=TextParser(quantities=[Quantity(
                     'energy',
-                    rf'\n *\d+\s*({re_float})', repeats=True, dtype=float, unit=ureg.hartree)])),
+                    rf'\n *\d+\s*({re_float})\s*{re_float}', repeats=True, dtype=float, unit=ureg.hartree)])),
             Quantity(
                 'final_grid',
                 r'Setting up the final grid:([\s\S]+?)\-{10}',
@@ -279,8 +279,7 @@ class OutParser(TextParser):
                 'absorption_spectrum_electric',
                 r'ABSORPTION SPECTRUM VIA TRANSITION ELECTRIC DIPOLE MOMENTS\s*'
                 r'\-+[\s\S]+?\-+\n([\s\S]+?)\-{10}',
-                str_operation=lambda x: np.array(
-                    [v.split() for v in x.strip().split('\n')]))]
+                str_operation=lambda x: [v.split() for v in x.strip().split('\n')])]
 
         # TODO parse more properties, add to metainfo
         mp2_quantities = [
@@ -687,7 +686,7 @@ class OrcaParser(FairdiParser):
                     xc_functionals.append('LDA_C_%s' % (lda_correlation))
 
                 if len(xc_functionals) == 0:
-                    self.logger.error('Cannot resolve xc functional', data=dict(name=xc_functional))
+                    self.logger.warn('Cannot resolve xc functional', data=dict(name=xc_functional))
 
         sec_xc_functional = sec_dft.m_create(XCFunctional)
         for functional in xc_functionals:
@@ -815,6 +814,7 @@ class OrcaParser(FairdiParser):
         spectrum = section.get('tddft', {}).get('absorption_spectrum_electric')
         if spectrum is not None:
             sec_excited = sec_scc.m_create(ExcitedStates)
+            spectrum = [val for val in spectrum if len(val) == 8]
             spectrum = np.transpose(spectrum)
             sec_excited.excitation_energies = (spectrum[1] * ureg.c * ureg.h / ureg.cm)
             sec_excited.oscillator_strengths = spectrum[3]
